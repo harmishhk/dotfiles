@@ -4,7 +4,7 @@ rm $HOME/.bashrc
 rm $HOME/.env
 rm $HOME/.gitconfig
 rm $HOME/.gitignore_global
-rm $HOME/.i3
+rm -rf $HOME/.i3
 rm $HOME/.ssh/config
 rm $HOME/.tmux.conf
 rm $HOME/.vimrc
