@@ -1,0 +1,41 @@
+# defaults
+separator_block_width=16
+#color=#ffffff
+align=center
+command=$HOME/.config/i3blocks/scripts/$BLOCK_NAME
+
+#[cpu_usage]
+#label=
+#interval=5
+
+[load_average]
+label=
+interval=5
+
+[memory]
+label=
+interval=5
+
+[disk]
+label=
+interval=60
+
+[battery]
+label=
+interval=30
+
+#[date]
+#command=date +"%b %d"
+#label=
+#interval=3600
+#separator=false
+#separator_block_width=0
+
+[time]
+command=date +"%l:%M %p"
+label=
+interval=1
+
+#[keyboard]
+#label=
+#interval=1

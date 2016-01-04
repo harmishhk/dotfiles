@@ -2,15 +2,18 @@
 *
 
 # except these files
+!i3
+!i3/**
 !scripts
 !scripts/**
 !bashrc
-!zshrc
-!vimrc
-!tmux.conf
 !install.sh
-!uninstall.sh
 !readme.md
+!ssh_config
+!tmux.conf
+!uninstall.sh
+!vimrc
+!zshrc
 
 # and except git stuff
 !.gitignore
