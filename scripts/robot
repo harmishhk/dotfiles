@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# setting the robot
+case "$HOSTNAME" in
+    "pr2c1")
+	ROBOT="pr2"
+	;;
+    "pr2c2")
+	ROBOT="pr2"
+	;;
+    "bobc1")
+	ROBOT="pr2"
+	;;
+    "bobc2")
+	ROBOT="pr2"
+	;;
+    *)
+	ROBOT=""
+	;;
+esac
+
+# do addtional stuff on the robots when required
+if [[ $ROBOT == "pr2" ]]; then
+    function rosset_pr2 {
+        # following variables are needed for the pr2 robot
+        export LC_ALL="C"
+        export ROS_ENV_LOADER=/etc/ros/$ROS_DISTRO/env.sh
+    }
+fi
