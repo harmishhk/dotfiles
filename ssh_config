@@ -45,31 +45,31 @@ Host mc2
 # spencer computers
 Host sc1
     User pc1
-    HostName spencer-pc1.laas.fr
+    HostName spencer-pc1
     PasswordAuthentication yes
     ForwardX11Trusted yes
 Host sc2
     User pc2
-    HostName spencer-pc1.laas.fr
+    HostName spencer-pc2
     PasswordAuthentication yes
     ForwardX11Trusted yes
 Host sint
     User interaction
-    HostName spencer-pcint.laas.fr
+    HostName spencer-pcint
     PasswordAuthentication yes
     ForwardX11Trusted yes
 Host sant
     User ant
-    HostName spencer-ant.laas.fr
+    HostName spencer-ant
     PasswordAuthentication yes
     ForwardX11Trusted yes
 Host sr
     User spencer
-    HostName spencer-rwth.laas.fr
+    HostName spencer-rwth
     PasswordAuthentication yes
     ForwardX11Trusted yes
 Host sf
     User spencer
-    HostName spencer-freiburg.laas.fr
+    HostName spencer-freiburg
     PasswordAuthentication yes
     ForwardX11Trusted yes
