@@ -21,8 +21,8 @@
     set $workspace1 "1: A"
     set $workspace2 "2: B"
     set $workspace3 "3: C"
-    set $workspace4 "4: D"
-    set $workspace5 "5: E"
+    set $workspace4 " Atom"
+    set $workspace5 " Rviz"
     set $workspace6 "6: F"
     set $workspace7 "7: G"
     set $workspace8 "8: H"
@@ -183,8 +183,10 @@
     #workspace $workspace10 output $monitor1
 
 
-# program workspaces
-    assign [class="Firefox"] $workspace10
+# program workspaces (use xprop to find out the class)
+    assign [class="Atom"] $workspiace4
+    assign [class="Rviz"] $workspiace5
+    assign [class="Firefox"] $workspiace10
 
 
 # enabling floating windows for specific programs
