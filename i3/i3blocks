@@ -24,6 +24,10 @@ interval=60
 label=
 interval=30
 
+[iface]
+label=
+interval=30
+
 #[date]
 #command=date +"%b %d"
 #label=
