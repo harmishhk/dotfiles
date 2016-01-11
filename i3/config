@@ -184,9 +184,9 @@
 
 
 # program workspaces (use xprop to find out the class)
-    assign [class="Atom"] $workspiace4
-    assign [class="Rviz"] $workspiace5
-    assign [class="Firefox"] $workspiace10
+    assign [class="Atom"] $workspace4
+    assign [class="Rviz"] $workspace5
+    assign [class="Firefox"] $workspace10
 
 
 # enabling floating windows for specific programs
