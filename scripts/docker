@@ -79,7 +79,7 @@ lmk()
         --name latex                                    `# name the container, so we can delete later` \
         --net=none                                      `# no internet required inside the container` \
         -u "$(id -u):$(id -g)"                          `# run everything within user space` \
-        harmishhk/latex latexmk --pdf -outdir=out "$@"  `# setting default outdir`
+        harmish/latex latexmk --pdf -outdir=out "$@"  `# setting default outdir`
 }
 
 aspell()
@@ -91,7 +91,7 @@ aspell()
         --name latex                                    `# name the container, so we can delete later` \
         --net=none                                      `# no internet required inside the container` \
         -u "$(id -u):$(id -g)"                          `# run everything within user space` \
-        harmishhk/latex aspell "$@"
+        harmish/latex aspell "$@"
 }
 
 latex()
@@ -103,7 +103,7 @@ latex()
         --name latex                                    `# name the container, so we can delete later` \
         --net=none                                      `# no internet required inside the container` \
         -u "$(id -u):$(id -g)"                          `# run everything within user space` \
-        harmishhk/latex
+        harmish/latex
 }
 
 # generic function for ros related containers
@@ -177,7 +177,7 @@ ros_docker()
     fi
 
     # run docker container
-    #echo "docker run ... $duser $envs $ent harmishhk/$img $copt";
+    #echo "docker run ... $duser $envs $ent harmish/$img $copt";
     docker_run --rm -it                                 `# remove container after use` \
         --net=host                                      `# helpful to dynamically connect to other ros containers` \
         -v $HOME/.ros:/.ros                             `# required by catking build` \
@@ -188,7 +188,7 @@ ros_docker()
         -w $(ros_workdir)                               `# = current directory when a ros-direcotry` \
         $duser                                          `# run everything within user space` \
         $ent                                            `# setting the entrypoint` \
-        harmishhk/$img $copt                            `# passing remaining arguments`
+        harmish/$img $copt                            `# passing remaining arguments`
 }
 
 indigo-base(){
@@ -243,7 +243,7 @@ ros-web(){
     docker run --rm -it \
         --net=host \
         -v $HOME/ros/web:/root/ros/web \
-        harmishhk/ros:web-devel $@
+        harmish/ros:web-devel $@
 }
 
 spencer(){
@@ -253,7 +253,7 @@ spencer(){
 morse(){
     docker run --rm -it \
         -u "$(id -u):$(id -g)" \
-        harmishhk/morse:morse $@
+        harmish/morse:morse $@
 }
 
 morse-ros(){
@@ -348,7 +348,7 @@ ros_docker_xvbf(){
     fi
 
     # run docker container
-    #echo "docker run ... $duser $envs $ent harmishhk/$img $copt";
+    #echo "docker run ... $duser $envs $ent harmish/$img $copt";
     docker_run --rm -it                                 `# remove container after use` \
         --net=host                                      `# helpful to dynamically connect to other ros containers` \
         -v $HOME/.ros:/.ros                             `# required by catking build` \
@@ -360,21 +360,21 @@ ros_docker_xvbf(){
         $duser                                          `# run everything within user space` \
         $ent                                            `# setting the entrypoint` \
         -e DISPLAY=:1                                   `# xvfb needs a display` \
-        harmishhk/$img $copt                            `# passing remaining arguments`
+        harmish/$img $copt                            `# passing remaining arguments`
 }
 
 ros-web-devel(){
     docker run --rm -it \
     -v `pwd`:${$(pwd)/$HOME//root} \
     -w ${$(pwd)/$HOME//root} \
-    harmishhk/ros:web-devel $@
+    harmish/ros:web-devel $@
 }
 
 julia(){
     docker run --rm -it \
         -v `pwd`:${$(pwd)/$HOME//root} \
         -w ${$(pwd)/$HOME//root} \
-        harmishhk/julia:latest $@
+        harmish/julia:latest $@
 }
 
 optitrack(){
@@ -406,7 +406,7 @@ jekyll(){
         -w "$(pwd)" \
         -p 4000:4000 \
         -u "$(id -u):$(id -g)" \
-        harmishhk/jekyll jekyll $@
+        harmish/jekyll jekyll $@
 
     docker_stop jekyll
 }
@@ -417,5 +417,5 @@ hexo(){
         -w "$(pwd)" \
         -p 4000:4000 \
         -u "$(id -u):$(id -g)" \
-        harmishhk/hexo $@
+        harmish/hexo $@
 }
