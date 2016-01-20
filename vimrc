@@ -74,9 +74,9 @@ set ignorecase
 set hlsearch
 
 " default to soft tabs, 4 spaces
+set tabstop=4
+set shiftwidth=4
 set expandtab
-set sw=4
-set sts=4
 
 " use base16 tomorrow dark theme
 colorscheme base16-default
