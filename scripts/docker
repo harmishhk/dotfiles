@@ -371,10 +371,13 @@ ros-web-devel(){
 }
 
 julia(){
+    touch $HOME/.julia_history
+
     docker run --rm -it \
-        -v `pwd`:${$(pwd)/$HOME//julia} \
+        -v $(pwd):$(pwd) \
         -v $HOME/.julia_history:/.julia_history \
-        -w ${$(pwd)/$HOME//julia} \
+        -w "$(pwd)" \
+        -u "$(id -u):$(id -g)" \
         harmish/julia:latest $@
 }
 
