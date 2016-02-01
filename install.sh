@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 DIR="$(dirname "$(readlink -f ${BASH_SOURCE[0]})")"
 
