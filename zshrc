@@ -5,7 +5,7 @@ export ZSH=$HOME/.oh-my-zsh
 ZSH_THEME="robbyrussell"
 
 # ssh identities to use
-zstyle :omz:plugins:ssh-agent identities github_rsa gitlab_rsa laas_rsa oru_rsa
+zstyle :omz:plugins:ssh-agent identities bitbucket_rsa github_rsa gitlab_rsa laas_rsa oru_rsa
 
 # plugins to load
 plugins=(command-not-found docker docker-compose git git-extras github gitignore history ssh-agent tmux z)
