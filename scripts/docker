@@ -378,7 +378,7 @@ julia(){
         -v $HOME/.julia_history:/.julia_history \
         -w "$(pwd)" \
         -u "$(id -u):$(id -g)" \
-        harmish/julia:latest $@
+        harmish/julia:latest julia $@
 }
 
 optitrack(){
