@@ -10,7 +10,7 @@ docker_cleanup()
 }
 
 # delete old container with same name
-docker_del_stopped()
+docker_del_stopped_named()
 {
     local name=$1
     local state=$(docker inspect --format "{{.State.Running}}" $name 2>/dev/null)
@@ -20,8 +20,8 @@ docker_del_stopped()
     fi
 }
 
-# stop a running container
-docker_stop()
+# stop a running container with same name
+docker_stop_named()
 {
     local name=$1
     local state=$(docker inspect --format "{{.State.Running}}" $name 2>/dev/null)
@@ -32,7 +32,7 @@ docker_stop()
 }
 
 # starts linked containers
-relies_on()
+docker_relies_on()
 {
     local containers=$@
 
@@ -46,6 +46,7 @@ relies_on()
     done
 }
 
+# print the full command before running the container
 docker_run()
 {
     echo "docker run $@"
@@ -53,69 +54,59 @@ docker_run()
 }
 
 
-## other helper functions
-
-# return current directory when a ros-direcotry
-ros_workdir()
-{
-    if test "${$(pwd)#*$HOME/ros}" != "$(pwd)"
-    then
-        echo $(pwd)
-    else
-        echo "/"
-    fi
-}
-
-
 ## container aliases
 
 # for common latex compilation
-lmk()
+lmk() { latexmk }
+latexmk()
 {
-    docker_del_stopped latex                            `# delete old containers with same name`
+    docker_del_stopped_named latex                      `# delete old containers with same name`
 
     docker run --rm -it                                 `# remove container after use` \
-        -v $(pwd):/latex                                `# share current directory` \
+        -v $(pwd):/latex                                `# share current directory as latex base directory` \
         --name latex                                    `# name the container, so we can delete later` \
         --net=none                                      `# no internet required inside the container` \
-        -u "$(id -u):$(id -g)"                          `# run everything within user space` \
-        harmish/latex latexmk --pdf -outdir=out "$@"  `# setting default outdir`
-}
+        harmish/latex latexmk --pdf -outdir=out $@      `# run latexmk inside latex container by setting default outdir`
 
-aspell()
-{
-    docker_del_stopped latex                            `# delete old containers with same name`
-
-    docker run --rm -it                                 `# remove container after use` \
-        -v $(pwd):/latex                                `# share current directory` \
-        --name latex                                    `# name the container, so we can delete later` \
-        --net=none                                      `# no internet required inside the container` \
-        -u "$(id -u):$(id -g)"                          `# run everything within user space` \
-        harmish/latex aspell "$@"
+    docker_stop_named latex                             `# stop the container, if-not already stopped`
 }
 
 latex()
 {
-    docker_del_stopped latex                            `# delete old containers with same name`
+    docker_del_stopped_named latex                      `# delete old containers with same name`
 
     docker run --rm -it                                 `# remove container after use` \
-        -v $(pwd):/latex                                `# share current directory` \
+        -v $(pwd):/latex                                `# share current directory as latex base directory` \
         --name latex                                    `# name the container, so we can delete later` \
         --net=none                                      `# no internet required inside the container` \
-        -u "$(id -u):$(id -g)"                          `# run everything within user space` \
-        harmish/latex
+        harmish/latex $@                                `# run latex inside latex container`
+
+    docker_stop_named latex                             `# stop the container, if-not already stopped`
 }
+
+# aspell()
+# {
+#     docker_del_stopped_named latex                      `# delete old containers with same name`
+#
+#     docker run --rm -it                                 `# remove container after use` \
+#         -v $(pwd):/latex                                `# share current directory as latex base directory` \
+#         --name latex                                    `# name the container, so we can delete later` \
+#         --net=none                                      `# no internet required inside the container` \
+#         harmish/latex aspell $@                         `# run aspell inside latex container`
+#
+#     docker_stop_named latex                             `# stop the container, if-not already stopped`
+# }
 
 # generic function for ros related containers
 ros_docker()
 {
     # check to see if at least image name was specified
     if [[ $# -lt 1 ]]; then
-        -e "\e[0;31m$1\e[0m" "ros_docker called without image name";
+        echo "$(tput setaf 1)error: ros_docker called without image name";
         return 1;
     fi
 
-    # parse the arguments
+    # parse the arguments with -e, -m and -o options
     declare -a args;
     declare -a envs;
     while [ $# -gt 0 ]; do
@@ -124,7 +115,7 @@ ros_docker()
                 shift;
                 if [ -n "$1" ]; then
                     envs+=("-e");
-                    envs+=("$1");
+                    envs+=($1);
                     shift;
                 fi
                 ;;
@@ -143,18 +134,21 @@ ros_docker()
                     shift;
                 fi
                 ;;
-            -su|--root)
+            -xvbf)
                 shift;
-                local super_user=true;
+                envs+=("-e");
+                envs+=("DISPLAY=:1");
+                local xvbf=true;
                 ;;
             *)
-                args+=("$1");
+                args+=($1);
                 shift;
                 ;;
         esac
     done
-    #echo "parsed args: " $args;
-    eval set "$args";
+
+    # set remaining arguments as function arguments
+    set -- $args;
 
     # get image for the container
     local img=$1;
@@ -165,261 +159,156 @@ ros_docker()
     declare -a copt;
     if [ -n "${overlay+1}" ]; then
         ent=("--entrypoint" "bash");
-        copt=("-c" "source $overlay && ""$*");
+        if [ "$xvbf" = true ] ; then
+            copt=("-c" "source $overlay && $*");
+        else
+            copt=("-c" "Xvfb -screen 0 1024x768x24 :1 >/dev/null 2>&1 & source $overlay && $*");
+        fi
     else
         copt=($@);
     fi
 
-    # run as root when asked
-    declare -a duser;
-    if [ ! "$super_user" = true ]; then
-        duser=("-u" "$(id -u):$(id -g)");
+    # set working directory to current directory if found under $HOME/ros
+    if [ "${$(pwd)##$HOME/ros}" != "$(pwd)" ]; then
+        local ros_workdir="$(pwd)";
+    else
+        local ros_workdir="/";
     fi
+    echo "$ros_workdir"
 
-    # run docker container
-    #echo "docker run ... $duser $envs $ent harmish/$img $copt";
-    docker_run --rm -it                                 `# remove container after use` \
-        --net=host                                      `# helpful to dynamically connect to other ros containers` \
-        -v $HOME/.ros:/.ros                             `# required by catking build` \
-        -v $HOME/.config/catkin:/.config/catkin:ro      `# required by catking build` \
-        -v $HOME/ros:$HOME/ros                          `# sharing all ros workspaces` \
-        $envs                                           `# setting additional evnironment variables` \
-        -e SHELL=/bin/bash                              `# setting deafult shecll needed by catkin` \
-        -w $(ros_workdir)                               `# = current directory when a ros-direcotry` \
-        $duser                                          `# run everything within user space` \
-        $ent                                            `# setting the entrypoint` \
-        harmish/$img $copt                            `# passing remaining arguments`
+    mkdir -p $HOME/.ros                                     `# create ros settings directory if-not-exist`
+    mkdir -p $HOME/.config/catkin                           `# create catkin config directory if-not-exist`
+
+    docker_run --rm -it                                     `# remove container after use` \
+        -v $HOME/.ros:/root/.ros                            `# sahre ros settings directory, required by catking build` \
+        -v $HOME/.config/catkin:/root/.config/catkin        `# share catkin config directory, required by catking build` \
+        -v $HOME/ros:$HOME/ros                              `# sharing all ros workspaces, with same path under host` \
+        $envs                                               `# setting additional evnironment variables` \
+        -e SHELL=/bin/bash                                  `# setting deafult shell, needed by catkin` \
+        -w $ros_workdir                                     `# setting ros working directory` \
+        $ent                                                `# setting the entrypoint` \
+        harmish/$img $copt                                  `# passing remaining arguments`
 }
 
 indigo-base(){
-    ros_docker ros:indigo-base $@
+    ros_docker ros:indigo-base $@           `# run ros_docker with indigo-base image`
 }
 
 indigo-robot(){
-    ros_docker ros:indigo-robot $@
+    ros_docker ros:indigo-robot $@          `# run ros_docker with indigo-robot image`
 }
 
 indigo-navigation(){
-    ros_docker ros:indigo-navigation $@
+    ros_docker ros:indigo-navigation $@     `# run ros_docker with indigo-navigation image`
 }
 
 indigo-desktop-full(){
-    ros_docker ros:indigo-desktop-full $@
+    ros_docker ros:indigo-desktop-full $@   `# run ros_docker with indigo-desktop-full image`
 }
 
 indigo-ultimate(){
-    ros_docker ros:indigo-ultimate $@
+    ros_docker ros:indigo-ultimate $@       `# run ros_docker with indigo-ultimate image`
 }
 
 jade-base(){
-    ros_docker ros:jade-base $@
+    ros_docker ros:jade-base $@             `# run ros_docker with jade-base image`
 }
 
 jade-robot(){
-    ros_docker ros:jade-robot $@
+    ros_docker ros:jade-robot $@            `# run ros_docker with jade-robot image`
 }
 
 jade-navigation(){
-    ros_docker ros:jade-navigation $@
+    ros_docker ros:jade-navigation $@       `# run ros_docker with jade-navigation image`
 }
 
 jade-desktop-full(){
-    ros_docker ros:jade-desktop-full $@
+    ros_docker ros:jade-desktop-full $@     `# run ros_docker with jade-desktop-full image`
 }
 
 jade-ultimate(){
-    ros_docker ros:jade-ultimate $@
+    ros_docker ros:jade-ultimate $@         `# run ros_docker with jade-ultimate image`
 }
 
 catkin_create_pkg(){
-    jade-desktop-full -o $HOME/ros/catkin_ws/install_jade "cd $HOME/ros/infrastructure/catkin_pkg && python setup.py install > /dev/null 2>&1 && cd - && catkin_create_pkg $@"
-}
-
-jade-web-devel(){
-    ros_docker ros:jade-web-devel $@
-}
-
-ros-web(){
-    docker run --rm -it \
-        --net=host \
-        -v $HOME/ros/web:/root/ros/web \
-        harmish/ros:web-devel $@
-}
-
-spencer(){
-    ros_docker spencer:indigo $@
-}
-
-morse(){
-    docker run --rm -it \
-        -u "$(id -u):$(id -g)" \
-        harmish/morse:morse $@
-}
-
-morse-ros(){
-    ros_docker_xvbf morse:ros-pr2 $@
-}
-
-# morse-ros(){
-#     local overlay_set=false;
-#     for arg in $@; do
-#         if [[ ("$arg" == "-o") || ("$arg" == "--overlay") ]]; then
-#             overlay_set=true;
-#             break;
-#         fi
-#     done
-#
-#     echo "$@";
-#     if [[ "$overlay_set" == "true" ]]; then
-#         echo "ros_docker morse:ros-pr2 $@"
-#         ros_docker morse:ros-pr2 xvbf-run -s $@
-#     else
-#         echo "ros_docker morse:ros-pr2 $@"
-#         ros_docker morse:ros-pr2 $@
-#     fi
-# }
-
-ros_docker_xvbf(){
-    # check to see if at least image name was specified
-    if [[ $# -lt 1 ]]; then
-        echo -e "\e[0;31m$1\e[0m" "ros_docker called without image name";
-        return 1;
-    fi
-
-    # parse the arguments
-    declare -a args;
-    declare -a envs;
-    while [ $# -gt 0 ]; do
-        case "$1" in
-            -e|--env)
-                shift;
-                if [ -n "$1" ]; then
-                    envs+=("-e");
-                    envs+=("$1");
-                    shift;
-                fi
-                ;;
-            -m|--master)
-                shift;
-                if [ -n "$1" ]; then
-                    envs+=("-e");
-                    envs+=("ROS_MASTER_URI=http://$1:11311");
-                    shift;
-                fi
-                ;;
-            -o|--overlay)
-                shift;
-                if [ -n "$1" ]; then
-                    local overlay="$1/setup.bash";
-                    shift;
-                fi
-                ;;
-            -su|--root)
-                shift;
-                local super_user=true;
-                ;;
-            *)
-                args+=("$1");
-                shift;
-                ;;
-        esac
-    done
-    #echo "parsed args: " $args;
-    eval set "$args";
-
-    # get image for the container
-    local img=$1;
-    shift;
-
-    # set entryponit and master-uri when asked
-    declare -a ent;
-    declare -a copt;
-    if [ -n "${overlay+1}" ]; then
-        ent=("--entrypoint" "bash");
-        copt=("-c" "Xvfb -screen 0 1024x768x24 :1 >/dev/null 2>&1 & source $overlay && $*");
-    else
-        copt=($@);
-    fi
-
-    # run as root when asked
-    declare -a duser;
-    if [ ! "$super_user" = true ]; then
-        duser=("-u" "$(id -u):$(id -g)");
-    fi
-
-    # run docker container
-    #echo "docker run ... $duser $envs $ent harmish/$img $copt";
-    docker_run --rm -it                                 `# remove container after use` \
-        --net=host                                      `# helpful to dynamically connect to other ros containers` \
-        -v $HOME/.ros:/.ros                             `# required by catking build` \
-        -v $HOME/.config/catkin:/.config/catkin:ro      `# required by catking build` \
-        -v $HOME/ros:$HOME/ros                          `# sharing all ros workspaces` \
-        $envs                                           `# setting additional evnironment variables` \
-        -e SHELL=/bin/bash                              `# setting deafult shecll needed by catkin` \
-        -w $(ros_workdir)                               `# = current directory when a ros-direcotry` \
-        $duser                                          `# run everything within user space` \
-        $ent                                            `# setting the entrypoint` \
-        -e DISPLAY=:1                                   `# xvfb needs a display` \
-        harmish/$img $copt                            `# passing remaining arguments`
-}
-
-ros-web-devel(){
-    docker run --rm -it \
-    -v `pwd`:${$(pwd)/$HOME//root} \
-    -w ${$(pwd)/$HOME//root} \
-    harmish/ros:web-devel $@
-}
-
-julia(){
-    touch $HOME/.julia_history
-
-    docker run --rm -it \
-        -v $(pwd):$(pwd) \
-        -v $HOME/.julia_history:/.julia_history \
-        -w "$(pwd)" \
-        -u "$(id -u):$(id -g)" \
-        harmish/julia:latest julia $@
+    jade-desktop-full                       `# call jade-desktop-full which call ros_docker` \
+        -o $HOME/ros/catkin_ws/install      `# overlay on catkin_ws` \
+        "cd $HOME/ros/infrastructure/catkin_pkg && python setup.py install > /dev/null 2>&1 && cd - && catkin_create_pkg $@"    `# install catkin_pkg and run catkin_create_pkg from this installed version`
 }
 
 optitrack(){
-    ros_docker robotpkg:optitrack $@
+    ros_docker robotpkg:optitrack $@        `# run ros_docker with robotpkg-optitrack image`
+}
+
+spencer(){
+    ros_docker spencer:indigo $@            `# run ros_docker with spencer-indigo image`
+}
+
+# jade-web-devel(){
+#     ros_docker ros:jade-web-devel $@        `# run ros_docker with jade-web-devel image`
+# }
+
+# ros-web(){
+#     docker run --rm -it \
+#         --net=host \
+#         -v $HOME/ros/web:/root/ros/web \
+#         harmish/ros:web-devel $@
+# }
+
+# ros-web-devel(){
+#     docker run --rm -it \
+#     -v $(pwd):${$(pwd)/$HOME//root} \
+#     -w ${$(pwd)/$HOME//root} \
+#     harmish/ros:web-devel $@
+# }
+
+morse(){
+    docker run --rm -it                     `# remove container after use` \
+        harmish/morse:morse $@              `# run morse with given arguments`
+}
+
+# morse-ros(){
+#     ros_docker -xvbf morse:ros-pr2 $@
+# }
+
+julia(){
+    touch $HOME/.julia_history                          `# create julia_history file if-not-exist`
+    mkdir -p $HOME/.julia                               `# create julia package directory if-not-exist`
+
+    docker run --rm -it                                 `# remove container after use` \
+        -v $HOME/.julia_history:/root/.julia_history    `# share julia_history` \
+        -v $HOME/.julia:/root/.julia                    `# share julia packages` \
+        -v $(pwd):$(pwd)                                `# mount current directory` \
+        -w $(pwd)                                       `# start workspaces at current directory` \
+        harmish/julia:latest julia $@                   `# execute julia with given arguments`
 }
 
 node(){
-    docker run --rm -it \
-        -v "$(pwd):$(pwd)" \
-        -w "$(pwd)" \
-        -u "$(id -u):$(id -g)" \
-        node node $@
+    docker run --rm -it             `# remove container after use` \
+        -v $(pwd):$(pwd)            `# mount currnet directory` \
+        -w $(pwd)                   `# start workspaces at current directory` \
+        node node $@                `# execute node with given arguments`
 }
 
 npm(){
-    docker run --rm -it \
-        -v "$(pwd):$(pwd)" -v "$HOME/.npm:/.npm" \
-        -w "$(pwd)" \
-        -u "$(id -u):$(id -g)" \
-        node npm $@
+    mkdir -p $HOME/.npm             `# create npm package directory if-not-exist`
+
+    docker run --rm -it             `# remove container after use` \
+        -v $HOME/.npm:/.npm         `# share npm package directory` \
+        -v $(pwd):$(pwd)            `# mount currnet directory` \
+        -w $(pwd)                   `# start workspaces at current directory` \
+        node npm $@                 `# execute npm from node-image with given arguments`
 }
 
 jekyll(){
-    docker_del_stopped jekyll
+    docker_del_stopped_named jekyll `# delete old containers with same name`
 
-    docker run --rm -t \
-        --name jekyll \
-        -v "$(pwd):$(pwd)" \
-        -w "$(pwd)" \
-        -p 4000:4000 \
-        -u "$(id -u):$(id -g)" \
-        harmish/jekyll jekyll $@
+    docker run --rm -t              `# remove container after use` \
+        -p 4000:4000                `# share default jekyll port` \
+        --name jekyll               `# name the container` \
+        -v $(pwd):$(pwd)            `# mount current directory` \
+        -w $(pwd)                   `# start workspaces at current directory` \
+        harmish/jekyll jekyll $@    `# execute jekyll with given arguments`
 
-    docker_stop jekyll
-}
-
-hexo(){
-    docker run --rm -it \
-        -v "$(pwd):$(pwd)" \
-        -w "$(pwd)" \
-        -p 4000:4000 \
-        -u "$(id -u):$(id -g)" \
-        harmish/hexo $@
+    docker_stop_named jekyll        `# stop the container`
 }
