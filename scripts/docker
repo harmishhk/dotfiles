@@ -313,3 +313,16 @@ jekyll(){
 
     docker_stop_named jekyll        `# stop the container`
 }
+
+rstudio(){
+    mkdir -p $HOME/.rstudio                 `# create julia package directory if-not-exist`
+
+    docker run --rm -t                      `# remove container after use` \
+        --name rstudio                      `# name the container` \
+        -p 8787:8787                        `# share default port of rserver` \
+        -v $HOME/.rstudio:/root/.rstudio    `# share user-rstudio directory` \
+        -v $(pwd):/root                     `# share current directory as working directory` \
+        harmish/rstudio:latest              `# run rstudio-server`
+
+    docker_stop_named rstudio
+}
