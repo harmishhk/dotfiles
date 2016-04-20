@@ -272,15 +272,16 @@ morse(){
 # }
 
 julia(){
-    touch $HOME/.julia_history                          `# create julia_history file if-not-exist`
-    mkdir -p $HOME/.julia                               `# create julia package directory if-not-exist`
+    local JULIA_DIR=$HOME
+    touch $JULIA_DIR/.julia_history                         `# create julia_history file if-not-exist`
+    mkdir -p $JULIA_DIR/.julia                              `# create julia package directory if-not-exist`
 
-    docker run --rm -it                                 `# remove container after use` \
-        -v $HOME/.julia_history:/root/.julia_history    `# share julia_history` \
-        -v $HOME/.julia:/root/.julia                    `# share julia packages` \
-        -v $(pwd):$(pwd)                                `# mount current directory` \
-        -w $(pwd)                                       `# start workspaces at current directory` \
-        harmish/julia:latest julia $@                   `# execute julia with given arguments`
+    docker run --rm -it                                     `# remove container after use` \
+        -v $JULIA_DIR/.julia_history:/root/.julia_history   `# share julia_history` \
+        -v $JULIA_DIR/.julia:/root/.julia                   `# share julia packages` \
+        -v $(pwd):$(pwd)                                    `# mount current directory` \
+        -w $(pwd)                                           `# start workspaces at current directory` \
+        harmish/julia:latest julia $@                       `# execute julia with given arguments`
 }
 
 node(){
