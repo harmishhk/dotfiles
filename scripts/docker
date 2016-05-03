@@ -106,7 +106,7 @@ ros_docker()
         return 1;
     fi
 
-    # parse the arguments with -c, -e, -m, -n, -o and -xvbf options
+    # parse the arguments with -c, -e, -m, -n, -o, -s, -v and -xvbf options
     declare -a args;
     declare -a envs;
     while [ $# -gt 0 ]; do
@@ -153,6 +153,25 @@ ros_docker()
                     shift;
                 fi
                 ;;
+            # share screen for gui apps
+            -s|--screen)
+                shift;
+                envs+=("-e");
+                envs+=("DISPLAY=:0");
+                envs+=("-v");
+                envs+=("/tmp/.X11-unix:/tmp/.X11-unix:ro");
+                envs+=("-e");
+                envs+=("QT_GRAPHICSSYSTEM=native");
+                ;;
+            # add more volumes to the container
+            -v|--volume)
+                shift;
+                if [ -n "$1" ]; then
+                    envs+=("-v");
+                    envs+=("$1");
+                    shift;
+                fi
+                ;;
             # use virtual screen for the container, that has gui elements
             -xvbf)
                 shift;
@@ -181,9 +200,11 @@ ros_docker()
     if [ -n "${overlay+1}" ]; then
         ent=("--entrypoint" "bash");
         if [ "$xvbf" = true ] ; then
-            copt=("-c" "source $overlay && $*");
+            copt+=("-c");
+            copt+=("\"source $overlay; Xvfb -screen 0 1024x768x24 :1 >/dev/null 2>&1 & $*\"");
         else
-            copt=("-c" "Xvfb -screen 0 1024x768x24 :1 >/dev/null 2>&1 & source $overlay && $*");
+            copt+=("-c");
+            copt+=("\"source $overlay; $*\"");
         fi
     else
         copt=($@);
