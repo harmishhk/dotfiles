@@ -106,11 +106,20 @@ ros_docker()
         return 1;
     fi
 
-    # parse the arguments with -e, -m and -o options
+    # parse the arguments with -c, -e, -m, -n, -o and -xvbf options
     declare -a args;
     declare -a envs;
     while [ $# -gt 0 ]; do
         case "$1" in
+            # user networking of given container (name)
+            -c|--container)
+                shift;
+                if [ -n "$1" ]; then
+                    envs+=("--net=container:$1");
+                    shift;
+                fi
+                ;;
+            # add given environment variables to the container
             -e|--env)
                 shift;
                 if [ -n "$1" ]; then
@@ -119,6 +128,7 @@ ros_docker()
                     shift;
                 fi
                 ;;
+            # set ROS_MASTER_URI to given IP or HOSTNAME
             -m|--master)
                 shift;
                 if [ -n "$1" ]; then
@@ -127,6 +137,15 @@ ros_docker()
                     shift;
                 fi
                 ;;
+            # name the container
+            -n|--name)
+                shift;
+                if [ -n "$1" ]; then
+                    envs+=("--name=$1");
+                    shift;
+                fi
+                ;;
+            # overlay given workspace
             -o|--overlay)
                 shift;
                 if [ -n "$1" ]; then
@@ -134,12 +153,14 @@ ros_docker()
                     shift;
                 fi
                 ;;
+            # use virtual screen for the container, that has gui elements
             -xvbf)
                 shift;
                 envs+=("-e");
                 envs+=("DISPLAY=:1");
                 local xvbf=true;
                 ;;
+            # collect remaining arguments
             *)
                 args+=($1);
                 shift;
@@ -147,7 +168,7 @@ ros_docker()
         esac
     done
 
-    # set remaining arguments as function arguments
+    # set remaining arguments as container process arguments
     set -- $args;
 
     # get image for the container
@@ -174,7 +195,6 @@ ros_docker()
     else
         local ros_workdir="/";
     fi
-    echo "$ros_workdir"
 
     mkdir -p $HOME/.ros                                     `# create ros settings directory if-not-exist`
     mkdir -p $HOME/.config/catkin                           `# create catkin config directory if-not-exist`
@@ -267,9 +287,9 @@ morse(){
         harmish/morse:morse $@              `# run morse with given arguments`
 }
 
-# morse-ros(){
-#     ros_docker -xvbf morse:ros-pr2 $@
-# }
+morse-ros(){
+    ros_docker -xvbf morse:ros-pr2 $@
+}
 
 julia(){
     local JULIA_DIR=$HOME
