@@ -31,6 +31,22 @@ docker_stop_named()
     fi
 }
 
+# restart daemon for overlay networking
+docker_daemon_restart()
+{
+    sudo service docker stop >/dev/null 2&>1
+    while [ -f /var/run/docker.pid ]; do
+        sudo kill $(cat /var/run/docker.pid) >/dev/null 2&>1
+        sleep 1
+    done
+
+    if [ -n "$1" ]; then
+        sudo docker daemon --userns-remap="$USERNAME" --cluster-store=consul://$1:8500 --cluster-advertise=eth1:2376 >/dev/null 2&>1 & disown
+    else
+        sudo docker daemon --userns-remap="$USERNAME" >/dev/null 2&>1 & disown
+    fi
+}
+
 # starts linked containers
 docker_relies_on()
 {
@@ -106,13 +122,13 @@ ros_docker()
         return 1;
     fi
 
-    # parse the arguments with -c, -e, -m, -n, -o, -s, -v and -xvbf options
+    # parse the arguments with -c, -e, -M, -n, -o, -s, -v and --xvbf options
     declare -a args;
     declare -a envs;
     while [ $# -gt 0 ]; do
         case "$1" in
             # user networking of given container (name)
-            -c|--container)
+            --netc)
                 shift;
                 if [ -n "$1" ]; then
                     envs+=("--net=container:$1");
@@ -129,7 +145,7 @@ ros_docker()
                 fi
                 ;;
             # set ROS_MASTER_URI to given IP or HOSTNAME
-            -m|--master)
+            --master)
                 shift;
                 if [ -n "$1" ]; then
                     envs+=("-e");
@@ -137,16 +153,26 @@ ros_docker()
                     shift;
                 fi
                 ;;
-            # name the container
-            -n|--name)
+            # name the container and ROS_HOSTNAME
+            --name)
                 shift;
                 if [ -n "$1" ]; then
                     envs+=("--name=$1");
+                    envs+=("-e");
+                    envs+=("ROS_HOSTNAME=$1");
+                    shift;
+                fi
+                ;;
+            # specity network for the container
+            --net)
+                shift;
+                if [ -n "$1" ]; then
+                    envs+=("--net=$1");
                     shift;
                 fi
                 ;;
             # overlay given workspace
-            -o|--overlay)
+            -o|--overlay-rosws)
                 shift;
                 if [ -n "$1" ]; then
                     local overlay="$1/setup.bash";
@@ -173,7 +199,7 @@ ros_docker()
                 fi
                 ;;
             # use virtual screen for the container, that has gui elements
-            -xvbf)
+            --xvbf)
                 shift;
                 envs+=("-e");
                 envs+=("DISPLAY=:1");
@@ -204,7 +230,7 @@ ros_docker()
             copt+=("\"source $overlay; Xvfb -screen 0 1024x768x24 :1 >/dev/null 2>&1 & $*\"");
         else
             copt+=("-c");
-            copt+=("\"source $overlay; $*\"");
+            copt+=("source $overlay; $*");
         fi
     else
         copt=($@);
@@ -219,10 +245,12 @@ ros_docker()
 
     mkdir -p $HOME/.ros                                     `# create ros settings directory if-not-exist`
     mkdir -p $HOME/.config/catkin                           `# create catkin config directory if-not-exist`
+    mkdir -p $HOME/.rviz                                    `# create rviz config directory if-not-exist`
 
     docker_run --rm -it                                     `# remove container after use` \
         -v $HOME/.ros:/root/.ros                            `# sahre ros settings directory, required by catking build` \
         -v $HOME/.config/catkin:/root/.config/catkin        `# share catkin config directory, required by catking build` \
+        -v $HOME/.rviz:/root/.rviz                          `# share rviz config directory` \
         -v $HOME/ros:$HOME/ros                              `# sharing all ros workspaces, with same path under host` \
         $envs                                               `# setting additional evnironment variables` \
         -e SHELL=/bin/bash                                  `# setting deafult shell, needed by catkin` \
@@ -272,8 +300,8 @@ jade-ultimate(){
 }
 
 catkin_create_pkg(){
-    jade-desktop-full                       `# call jade-desktop-full which call ros_docker` \
-        -o $HOME/ros/catkin_ws/install      `# overlay on catkin_ws` \
+    jade-desktop-full                                                                                                           `# call jade-desktop-full which call ros_docker` \
+        --overlay-rosws $HOME/ros/catkin_ws/install                                                                             `# overlay on catkin_ws` \
         "cd $HOME/ros/infrastructure/catkin_pkg && python setup.py install > /dev/null 2>&1 && cd - && catkin_create_pkg $@"    `# install catkin_pkg and run catkin_create_pkg from this installed version`
 }
 
@@ -309,7 +337,7 @@ morse(){
 }
 
 morse-ros(){
-    ros_docker -xvbf morse:ros-pr2 $@
+    ros_docker --xvbf morse:ros-pr2 $@
 }
 
 julia(){
