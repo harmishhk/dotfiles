@@ -73,7 +73,6 @@ docker_run()
 ## container aliases
 
 # for common latex compilation
-lmk() { latexmk }
 latexmk()
 {
     docker_del_stopped_named latex                      `# delete old containers with same name`
@@ -85,6 +84,10 @@ latexmk()
         harmish/latex latexmk --pdf -outdir=out $@      `# run latexmk inside latex container by setting default outdir`
 
     docker_stop_named latex                             `# stop the container, if-not already stopped`
+}
+lmk()
+{
+    latexmk $@
 }
 
 latex()
@@ -100,18 +103,6 @@ latex()
     docker_stop_named latex                             `# stop the container, if-not already stopped`
 }
 
-# aspell()
-# {
-#     docker_del_stopped_named latex                      `# delete old containers with same name`
-#
-#     docker run --rm -it                                 `# remove container after use` \
-#         -v $(pwd):/latex                                `# share current directory as latex base directory` \
-#         --name latex                                    `# name the container, so we can delete later` \
-#         --net=none                                      `# no internet required inside the container` \
-#         harmish/latex aspell $@                         `# run aspell inside latex container`
-#
-#     docker_stop_named latex                             `# stop the container, if-not already stopped`
-# }
 
 # generic function for ros related containers
 ros_docker()
