@@ -41,7 +41,12 @@ docker_daemon_restart()
     done
 
     if [ -n "$1" ]; then
-        sudo docker daemon --userns-remap="$USERNAME" --cluster-store=consul://$1:8500 --cluster-advertise=eth1:2376 >/dev/null 2&>1 & disown
+        if [ -n "$2" ]; then
+            local nic=$2
+        else
+            local nic="eth1"
+        fi
+        sudo docker daemon --userns-remap="$USERNAME" --cluster-store=consul://$1:8500 --cluster-advertise=$nic:2376 >/dev/null 2&>1 & disown
     else
         sudo docker daemon --userns-remap="$USERNAME" >/dev/null 2&>1 & disown
     fi
