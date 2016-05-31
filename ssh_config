@@ -19,6 +19,11 @@ Host lh
     HostName harmish.laas.fr
     IdentityFile $HOME/.ssh/laas_rsa.pub
     ForwardX11Trusted yes
+Host lg
+    User hkhambha
+    HostName georgina.laas.fr
+    IdentityFile $HOME/.ssh/laas_rsa.pub
+    ForwardX11Trusted yes
 Host ls
     User hkhambha
     HostName saint-cyprien.laas.fr
