@@ -175,6 +175,15 @@ ros_docker()
                     shift;
                 fi
                 ;;
+            # pulish container ports
+            -p)
+                shift;
+                if [ -n "$1" ]; then
+                    envs+=("-p");
+                    envs+=($1);
+                    shift;
+                fi
+                ;;
             # share screen for gui apps
             -s|--screen)
                 shift;
@@ -390,4 +399,9 @@ rstudio(){
         harmish/rstudio:latest              `# run rstudio-server`
 
     docker_stop_named rstudio
+}
+
+consul()
+{
+    docker run -d -p 8500:8500 -h consul progrium/consul -server -bootstrap
 }
