@@ -140,6 +140,11 @@ ros_docker()
                     shift;
                 fi
                 ;;
+            # add given environment variables to the container
+            -g|--cuda)
+                shift;
+                envs+=($(curl -s http://localhost:3476/docker/cli));
+                ;;
             # set ROS_MASTER_URI to given IP or HOSTNAME
             --master)
                 shift;
@@ -304,10 +309,20 @@ jade-ultimate(){
     ros_docker ros:jade-ultimate $@         `# run ros_docker with jade-ultimate image`
 }
 
-catkin_create_pkg(){
-    jade-desktop-full                                                                                                           `# call jade-desktop-full which call ros_docker` \
-        --overlay-rosws $HOME/ros/catkin_ws/install                                                                             `# overlay on catkin_ws` \
-        "cd $HOME/ros/infrastructure/catkin_pkg && python setup.py install > /dev/null 2>&1 && cd - && catkin_create_pkg $@"    `# install catkin_pkg and run catkin_create_pkg from this installed version`
+kinetic-base(){
+    ros_docker ros:kinetic-base $@          `# run ros_docker with kinetic-base image`
+}
+
+kinetic-robot(){
+    ros_docker ros:kinetic-robot $@         `# run ros_docker with kinetic-robot image`
+}
+
+kinetic-navigation(){
+    ros_docker ros:kinetic-navigation $@    `# run ros_docker with kinetic-navigation image`
+}
+
+kinetic-desktop-full(){
+    ros_docker ros:kinetic-desktop-full $@  `# run ros_docker with kinetic-desktop-full image`
 }
 
 optitrack(){
