@@ -118,7 +118,7 @@ ros_docker()
         return 1;
     fi
 
-    # parse the arguments with -c, -e, -M, -n, -o, -s, -v and --xvbf options
+    # parse the arguments with -c, -e, -M, -n, -o, -s, -v and --xvfb options
     declare -a args;
     declare -a envs;
     while [ $# -gt 0 ]; do
@@ -209,11 +209,11 @@ ros_docker()
                 fi
                 ;;
             # use virtual screen for the container, that has gui elements
-            --xvbf)
+            --xvfb)
                 shift;
                 envs+=("-e");
                 envs+=("DISPLAY=:1");
-                local xvbf=true;
+                local xvfb=true;
                 ;;
             # collect remaining arguments
             *)
@@ -235,7 +235,7 @@ ros_docker()
     declare -a copt;
     if [ -n "${overlay+1}" ]; then
         ent=("--entrypoint" "bash");
-        if [ "$xvbf" = true ] ; then
+        if [ "$xvfb" = true ] ; then
             copt+=("-c");
             copt+=("\"source $overlay; Xvfb -screen 0 1024x768x24 :1 >/dev/null 2>&1 & $*\"");
         else
@@ -357,7 +357,7 @@ morse(){
 }
 
 morse-ros(){
-    ros_docker --xvbf morse:ros-pr2 $@
+    ros_docker --xvfb morse:ros-pr2 $@
 }
 
 julia(){
