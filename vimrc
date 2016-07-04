@@ -79,7 +79,7 @@ set shiftwidth=4
 set expandtab
 
 " use base16 tomorrow dark theme
-colorscheme base16-default
+colorscheme base16-tomorrow-night
 set background=dark
 
 " tip: install plugins with 'vim +PluginInstall +qall' command
