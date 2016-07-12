@@ -266,63 +266,71 @@ ros_docker()
         -e SHELL=/bin/bash                                  `# setting deafult shell, needed by catkin` \
         -w $ros_workdir                                     `# setting ros working directory` \
         $ent                                                `# setting the entrypoint` \
-        harmish/$img $copt                                  `# passing remaining arguments`
+        $img $copt                                  `# passing remaining arguments`
 }
 
 indigo-base(){
-    ros_docker ros:indigo-base $@           `# run ros_docker with indigo-base image`
+    ros_docker ros:indigo-ros-base $@               `# run ros_docker with indigo-base image`
 }
 
 indigo-robot(){
-    ros_docker ros:indigo-robot $@          `# run ros_docker with indigo-robot image`
+    ros_docker ros:indigo-robot $@                  `# run ros_docker with indigo-robot image`
 }
 
 indigo-navigation(){
-    ros_docker ros:indigo-navigation $@     `# run ros_docker with indigo-navigation image`
+    ros_docker harmish/ros:indigo-navigation $@     `# run ros_docker with indigo-navigation image`
 }
 
 indigo-desktop-full(){
-    ros_docker ros:indigo-desktop-full $@   `# run ros_docker with indigo-desktop-full image`
+    ros_docker osrf/ros:indigo-desktop-full $@      `# run ros_docker with indigo-desktop-full image`
 }
 
-indigo-ultimate(){
-    ros_docker ros:indigo-ultimate $@       `# run ros_docker with indigo-ultimate image`
+indigo-devel(){
+    ros_docker harmish/ros:indigo-devel $@          `# run ros_docker with indigo-devel image`
+}
+
+indigo(){
+    ros_docker harmish/ros:indigo $@                `# run ros_docker with indigo image`
 }
 
 jade-base(){
-    ros_docker ros:jade-base $@             `# run ros_docker with jade-base image`
+    ros_docker ros:jade-ros-base $@                 `# run ros_docker with jade-base image`
 }
 
 jade-robot(){
-    ros_docker ros:jade-robot $@            `# run ros_docker with jade-robot image`
+    ros_docker ros:jade-robot $@                    `# run ros_docker with jade-robot image`
 }
 
 jade-navigation(){
-    ros_docker ros:jade-navigation $@       `# run ros_docker with jade-navigation image`
+    ros_docker harmish/ros:jade-navigation $@       `# run ros_docker with jade-navigation image`
 }
 
 jade-desktop-full(){
-    ros_docker ros:jade-desktop-full $@     `# run ros_docker with jade-desktop-full image`
+    ros_docker osrf/ros:jade-desktop-full $@        `# run ros_docker with jade-desktop-full image`
 }
 
-jade-ultimate(){
-    ros_docker ros:jade-ultimate $@         `# run ros_docker with jade-ultimate image`
+jade-devel(){
+    ros_docker harmish/ros:jade-devel $@            `# run ros_docker with jade-devel image`
 }
 
 kinetic-base(){
-    ros_docker ros:kinetic-base $@          `# run ros_docker with kinetic-base image`
+    ros_docker ros:kinetic-ros-base $@              `# run ros_docker with kinetic-base image`
 }
 
 kinetic-robot(){
-    ros_docker ros:kinetic-robot $@         `# run ros_docker with kinetic-robot image`
+    ros_docker ros:kinetic-robot $@                 `# run ros_docker with kinetic-robot image`
 }
 
 kinetic-navigation(){
-    ros_docker ros:kinetic-navigation $@    `# run ros_docker with kinetic-navigation image`
+    ros_docker harmish/ros:kinetic-navigation $@    `# run ros_docker with kinetic-navigation image`
 }
 
 kinetic-desktop-full(){
-    ros_docker ros:kinetic-desktop-full $@  `# run ros_docker with kinetic-desktop-full image`
+    ros_docker osrf/ros:kinetic-desktop-full $@     `# run ros_docker with kinetic-desktop-full image`
+}
+
+kinetic-devel(){
+    ros_docker harmish/ros:kinetic-devel $@         `# run ros_docker with kinetic-devel image`
 }
 
 optitrack(){
@@ -333,23 +341,11 @@ spencer(){
     ros_docker spencer:indigo $@            `# run ros_docker with spencer-indigo image`
 }
 
-# jade-web-devel(){
-#     ros_docker ros:jade-web-devel $@        `# run ros_docker with jade-web-devel image`
-# }
-
-# ros-web(){
-#     docker run --rm -it \
-#         --net=host \
-#         -v $HOME/ros/web:/root/ros/web \
-#         harmish/ros:web-devel $@
-# }
-
-# ros-web-devel(){
-#     docker run --rm -it \
-#     -v $(pwd):${$(pwd)/$HOME//root} \
-#     -w ${$(pwd)/$HOME//root} \
-#     harmish/ros:web-devel $@
-# }
+ros-web-devel(){
+    docker run --rm -it \
+        -v $(pwd):/robotwebtools \
+        harmish/ros:web-devel $@
+}
 
 morse(){
     docker run --rm -it                     `# remove container after use` \
@@ -357,7 +353,7 @@ morse(){
 }
 
 morse-ros(){
-    ros_docker --xvfb morse:ros-pr2 $@
+    ros_docker --xvfb harmish/morse:ros-pr2 $@
 }
 
 julia(){
