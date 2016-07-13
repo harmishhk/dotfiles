@@ -1,18 +1,22 @@
 #!/bin/sh
 
 # setting the robot
-case "$HOSTNAME" in
-    "pr2c1")
+case "$HOST" in
+    "maxc1")
 	ROBOT="pr2"
+    ROS_DISTRO="hydro"
 	;;
-    "pr2c2")
+    "maxc2")
 	ROBOT="pr2"
+    ROS_DISTRO="hydro"
 	;;
     "bobc1")
 	ROBOT="pr2"
+    ROS_DISTRO="indigo"
 	;;
     "bobc2")
 	ROBOT="pr2"
+    ROS_DISTRO="indigo"
 	;;
     *)
 	ROBOT=""
