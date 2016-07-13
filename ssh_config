@@ -1,85 +1,42 @@
-# git repository servers
-Host github.com
-    User git
-    IdentityFile $HOME/.ssh/github_rsa.pub
-Host gitlab.com
-    User git
-    IdentityFile $HOME/.ssh/gitlab_rsa.pub
-Host gitsvn-nt.oru.se
-    User git
-    IdentityFile $HOME/.ssh/oru_rsa.pub
-
 # computers at LAAS
 Host *.laas.fr
     User hkhambha
-    IdentityFile $HOME/.ssh/laas_rsa.pub
+    IdentityFile $HOME/.ssh/laas_rsa
     ForwardX11Trusted yes
 Host lh
     User hkhambha
     HostName harmish.laas.fr
-    IdentityFile $HOME/.ssh/laas_rsa.pub
+    IdentityFile $HOME/.ssh/laas_rsa
     ForwardX11Trusted yes
 Host lg
     User hkhambha
     HostName georgina.laas.fr
-    IdentityFile $HOME/.ssh/laas_rsa.pub
+    IdentityFile $HOME/.ssh/laas_rsa
     ForwardX11Trusted yes
 Host ls
     User hkhambha
     HostName saint-cyprien.laas.fr
-    IdentityFile $HOME/.ssh/laas_rsa.pub
+    IdentityFile $HOME/.ssh/laas_rsa
     ForwardX11Trusted yes
 
 # pr2 computers
 Host bc1
     User hkhambha
     HostName bobc1.laas.fr
-    IdentityFile $HOME/.ssh/laas_rsa.pub
+    IdentityFile $HOME/.ssh/laas_rsa
     ForwardX11Trusted yes
 Host bc2
     User hkhambha
     HostName bobc2.laas.fr
-    IdentityFile $HOME/.ssh/laas_rsa.pub
+    IdentityFile $HOME/.ssh/laas_rsa
     ForwardX11Trusted yes
 Host mc1
     User hkhambha
     HostName maxc1.laas.fr
-    IdentityFile $HOME/.ssh/laas_rsa.pub
+    IdentityFile $HOME/.ssh/laas_rsa
     ForwardX11Trusted yes
 Host mc2
     User hkhambha
     HostName maxc2.laas.fr
-    IdentityFile $HOME/.ssh/laas_rsa.pub
-    ForwardX11Trusted yes
-
-# spencer computers
-Host sc1
-    User pc1
-    HostName spencer-pc1
-    PasswordAuthentication yes
-    ForwardX11Trusted yes
-Host sc2
-    User pc2
-    HostName spencer-pc2
-    PasswordAuthentication yes
-    ForwardX11Trusted yes
-Host sint
-    User interaction
-    HostName spencer-pcint
-    PasswordAuthentication yes
-    ForwardX11Trusted yes
-Host sant
-    User ant
-    HostName spencer-ant
-    PasswordAuthentication yes
-    ForwardX11Trusted yes
-Host sr
-    User spencer
-    HostName spencer-rwth
-    PasswordAuthentication yes
-    ForwardX11Trusted yes
-Host sf
-    User spencer
-    HostName spencer-freiburg
-    PasswordAuthentication yes
+    IdentityFile $HOME/.ssh/laas_rsa
     ForwardX11Trusted yes
