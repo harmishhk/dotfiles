@@ -8,7 +8,7 @@
 !scripts/**
 !bashrc
 !install.sh
-!readme.md
+!README.md
 !ssh_config
 !tmux.conf
 !uninstall.sh

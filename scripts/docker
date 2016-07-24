@@ -253,20 +253,20 @@ ros_docker()
         local ros_workdir="/";
     fi
 
-    mkdir -p $HOME/.ros                                     `# create ros settings directory if-not-exist`
-    mkdir -p $HOME/.config/catkin                           `# create catkin config directory if-not-exist`
-    mkdir -p $HOME/.rviz                                    `# create rviz config directory if-not-exist`
+    mkdir -p $HOME/.ros                                 `# create ros settings directory if-not-exist`
+    mkdir -p $HOME/.config/catkin                       `# create catkin config directory if-not-exist`
+    mkdir -p $HOME/.rviz                                `# create rviz config directory if-not-exist`
 
-    docker_run --rm -it                                     `# remove container after use` \
-        -v $HOME/.ros:/root/.ros                            `# sahre ros settings directory, required by catking build` \
-        -v $HOME/.config/catkin:/root/.config/catkin        `# share catkin config directory, required by catking build` \
-        -v $HOME/.rviz:/root/.rviz                          `# share rviz config directory` \
-        -v $HOME/ros:$HOME/ros                              `# sharing all ros workspaces, with same path under host` \
-        $envs                                               `# setting additional evnironment variables` \
-        -e SHELL=/bin/bash                                  `# setting deafult shell, needed by catkin` \
-        -w $ros_workdir                                     `# setting ros working directory` \
-        $ent                                                `# setting the entrypoint` \
-        $img $copt                                  `# passing remaining arguments`
+    docker_run --rm -it                                 `# remove container after use` \
+        -v $HOME/.ros:/root/.ros                        `# sahre ros settings directory, required by catking build` \
+        -v $HOME/.config/catkin:/root/.config/catkin    `# share catkin config directory, required by catking build` \
+        -v $HOME/.rviz:/root/.rviz                      `# share rviz config directory` \
+        -v $HOME/ros:$HOME/ros                          `# sharing all ros workspaces, with same path under host` \
+        $envs                                           `# setting additional evnironment variables` \
+        -e SHELL=/bin/bash                              `# setting deafult shell, needed by catkin` \
+        -w $ros_workdir                                 `# setting ros working directory` \
+        $ent                                            `# setting the entrypoint` \
+        $img $copt                                      `# passing remaining arguments`
 }
 
 indigo-base(){
@@ -334,26 +334,22 @@ kinetic-devel(){
 }
 
 optitrack(){
-    ros_docker robotpkg:optitrack $@        `# run ros_docker with robotpkg-optitrack image`
-}
-
-spencer(){
-    ros_docker spencer:indigo $@            `# run ros_docker with spencer-indigo image`
+    ros_docker harmish/robotpkg:optitrack $@        `# run ros_docker with robotpkg-optitrack image`
 }
 
 ros-web-devel(){
-    docker run --rm -it \
-        -v $(pwd):/robotwebtools \
-        harmish/ros:web-devel $@
+    docker run --rm -it                             `# remove container after use` \
+        -v $(pwd):/robotwebtools                    `# share directory wtih sources` \
+        harmish/ros:web-devel $@                    `# run ros:web-devel with given arguments`
 }
 
 morse(){
-    docker run --rm -it                     `# remove container after use` \
-        harmish/morse:morse $@              `# run morse with given arguments`
+    docker run --rm -it                         `# remove container after use` \
+        harmish/morse:morse $@                  `# run morse with given arguments`
 }
 
 morse-ros(){
-    ros_docker --xvfb harmish/morse:ros-pr2 $@
+    ros_docker --xvfb harmish/morse:ros-pr2 $@  `# run ros_docker with morse:ros-pr2 image and use xvfb screen`
 }
 
 julia(){
@@ -396,7 +392,7 @@ jekyll(){
         -w $(pwd)                   `# start workspaces at current directory` \
         harmish/jekyll jekyll $@    `# execute jekyll with given arguments`
 
-    docker_stop_named jekyll        `# stop the container`
+    docker_stop_named jekyll
 }
 
 rstudio(){
@@ -409,29 +405,46 @@ rstudio(){
         -v $(pwd):/root                     `# share current directory as working directory` \
         harmish/rstudio:latest              `# run rstudio-server`
 
-    docker_stop_named rstudio
+    docker_stop_named rstudio               `# stop the container`
 }
 
 consul() {
-    docker run -d -p 8500:8500 -h consul progrium/consul -server -bootstrap
+    docker_stop_named consul_server         `# stop old running container`
+    docker_del_stopped_named consul_server  `# delete old container with same name`
+
+    docker run -d                           `# run as daemon` \
+        --name consul_server                `# name the container` \
+        -p 8500:8500                        `# share default port of consul` \
+        -h consul                           `# set container hostname` \
+        progrium/consul -server -bootstrap  `# run consul`
 }
 
 registry() {
-    docker run -d -p 5000:5000 --restart=always --name registry \
-        -v `pwd`/data:/var/lib/registry \
-        -v `pwd`/certs:/certs \
-        -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt \
-        -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key \
-        registry:2
+    docker_stop_named registry_server                       `# stop old running container`
+    docker_del_stopped_named registry_server                `# delete old container with same name`
+
+    docker run -d                                           `# run as daemon` \
+        --name registry_server                              `# name the container` \
+        -p 5000:5000                                        `# share default port of registry` \
+        --restart=always                                    `# restart iff container exits` \
+        -v `pwd`/data:/var/lib/registry                     `# share the data directory` \
+        -v `pwd`/certs:/certs                               `# share the certs directory` \
+        -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt  `# set http tls certs` \
+        -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key          `# set http tls key` \
+        registry:2                                          `# run registry`
 }
 
 registry-frontend() {
-    local name=$1
+    local reg_host=$1                                       `# the given registry server`
+    docker_del_stopped_named registry_frontend              `# delete old container with same name`
 
-    docker run --rm -it \
-        -e ENV_DOCKER_REGISTRY_HOST=$name \
-        -e ENV_DOCKER_REGISTRY_PORT=5000 \
-        -e ENV_DOCKER_REGISTRY_USE_SSL=1 \
-        -p 8080:80 \
-        konradkleine/docker-registry-frontend:v2
+    docker run --rm -it                                     `# remove container after use` \
+        --name registry_frontend                            `# name the container` \
+        -e ENV_DOCKER_REGISTRY_HOST=$reg_host               `# set registry host` \
+        -e ENV_DOCKER_REGISTRY_PORT=5000                    `# default port of registry` \
+        -e ENV_DOCKER_REGISTRY_USE_SSL=1                    `# use ssl` \
+        -p 8080:80                                          `# share port of viewer` \
+        konradkleine/docker-registry-frontend:v2            `# run registry frontend`
+
+    docker_stop_named registry_frontend                     `# stop running container`
 }
