@@ -258,6 +258,7 @@ ros_docker()
     mkdir -p $HOME/.rviz                                `# create rviz config directory if-not-exist`
 
     docker_run --rm -it                                 `# remove container after use` \
+        -v /etc/localtime:/etc/localtime:ro             `# use host clock ` \
         -v $HOME/.ros:/root/.ros                        `# sahre ros settings directory, required by catking build` \
         -v $HOME/.config/catkin:/root/.config/catkin    `# share catkin config directory, required by catking build` \
         -v $HOME/.rviz:/root/.rviz                      `# share rviz config directory` \
@@ -287,6 +288,10 @@ indigo-desktop-full(){
 
 indigo-devel(){
     ros_docker harmish/ros:indigo-devel $@          `# run ros_docker with indigo-devel image`
+}
+
+indigo-rosbridge(){
+    ros_docker harmish/ros:indigo-rosbridge $@      `# run ros_docker with indigo-rosbridge image`
 }
 
 indigo(){
