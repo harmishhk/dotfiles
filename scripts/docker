@@ -70,8 +70,17 @@ docker_relies_on()
 # print the full command before running the container
 docker_run()
 {
-    echo "docker run $@"
-    docker run $@
+    declare -a userids
+    userids+=("-u")
+    userids+=($(id -u):$(id -g))
+
+    if [ "$DOCKER_USERNS" -eq 0 ] ; then
+        echo "docker run $userids $@"
+        docker run $userids $@
+    else
+        echo "docker run $@"
+        docker run $@
+    fi
 }
 
 
@@ -453,6 +462,8 @@ registry-frontend() {
 
     docker_stop_named registry_frontend                     `# stop running container`
 }
+
+
 ## setting DOCKER_HOME and DOCKER_USERNS
 
 if hash docker 2>/dev/null; then
@@ -461,4 +472,9 @@ if hash docker 2>/dev/null; then
     else
         DOCKER_HOME=$HOME
     fi
+
+    DOCKER_USERNS=$(docker info 2>/dev/null | \
+                    awk '$1 ~ /Root/ && $2 ~ /Dir/ { print $3; }' | \
+                    awk -F/ '{ print $(NF-1); }' | \
+                    awk -F. '{ if (NF == 2 && $1 + 0 == $1 && $2 + 0 == $2) print 1; else print 0; }')
 fi
