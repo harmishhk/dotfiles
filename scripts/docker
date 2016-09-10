@@ -70,13 +70,15 @@ docker_relies_on()
 # print the full command before running the container
 docker_run()
 {
-    declare -a userids
-    userids+=("-u")
-    userids+=($(id -u):$(id -g))
+    declare -a usersetup
+    usersetup+=("-u")
+    usersetup+=($(id -u):$(id -g))
+    usersetup+=("-e")
+    usersetup+=("HOME=$DOCKER_HOME")
 
     if [ "$DOCKER_USERNS" -eq 0 ] ; then
-        echo "docker run $userids $@"
-        docker run $userids $@
+        echo "docker run $usersetup $@"
+        docker run $usersetup $@
     else
         echo "docker run $@"
         docker run $@
@@ -255,28 +257,28 @@ ros_docker()
         copt=($@);
     fi
 
-    # set working directory to current directory if found under $DOCKER_HOME/ros
-    if [ "${$(pwd)##$DOCKER_HOME/ros}" != "$(pwd)" ]; then
+    # set working directory to current directory if found under $USER_HOME/ros
+    if [ "${$(pwd)##$USER_HOME/ros}" != "$(pwd)" ]; then
         local ros_workdir="$(pwd)";
     else
         local ros_workdir="/";
     fi
 
-    mkdir -p $DOCKER_HOME/.ros                              `# create ros settings directory when-not-exist`
-    mkdir -p $DOCKER_HOME/.config/catkin                    `# create catkin config directory when-not-exist`
-    mkdir -p $DOCKER_HOME/.rviz                             `# create rviz config directory when-not-exist`
+    mkdir -p $USER_HOME/.ros                                        `# create ros settings directory when-not-exist`
+    mkdir -p $USER_HOME/.config/catkin                              `# create catkin config directory when-not-exist`
+    mkdir -p $USER_HOME/.rviz                                       `# create rviz config directory when-not-exist`
 
-    docker_run --rm -it                                     `# remove container after use` \
-        -v /etc/localtime:/etc/localtime:ro                 `# use host clock ` \
-        -v $DOCKER_HOME/.ros:/root/.ros                     `# sahre ros settings directory, required by catking build` \
-        -v $DOCKER_HOME/.config/catkin:/root/.config/catkin `# share catkin config directory, required by catking build` \
-        -v $DOCKER_HOME/.rviz:/root/.rviz                   `# share rviz config directory` \
-        -v $DOCKER_HOME/ros:$DOCKER_HOME/ros                `# sharing all ros workspaces, with same path under host` \
-        $envs                                               `# setting additional evnironment variables` \
-        -e SHELL=/bin/bash                                  `# setting deafult shell, needed by catkin` \
-        -w $ros_workdir                                     `# setting ros working directory` \
-        $ent                                                `# setting the entrypoint` \
-        $img $copt                                          `# passing remaining arguments`
+    docker_run --rm -it                                             `# remove container after use` \
+        -v /etc/localtime:/etc/localtime:ro                         `# use host clock ` \
+        -v $USER_HOME/.ros:$DOCKER_HOME/.ros                        `# sahre ros settings directory, required by catking build` \
+        -v $USER_HOME/.config/catkin:$DOCKER_HOME/.config/catkin    `# share catkin config directory, required by catking build` \
+        -v $USER_HOME/.rviz:$DOCKER_HOME/.rviz                      `# share rviz config directory` \
+        -v $USER_HOME/ros:$USER_HOME/ros                            `# sharing all ros workspaces, with same path under host` \
+        $envs                                                       `# setting additional evnironment variables` \
+        -e SHELL=/bin/bash                                          `# setting deafult shell, needed by catkin` \
+        -w $ros_workdir                                             `# setting ros working directory` \
+        $ent                                                        `# setting the entrypoint` \
+        $img $copt                                                  `# passing remaining arguments`
 }
 
 indigo-base(){
@@ -358,25 +360,28 @@ ros-web-devel(){
 }
 
 morse(){
-    docker run --rm -it                         `# remove container after use` \
-        harmish/morse:morse $@                  `# run morse with given arguments`
+    docker run --rm -it                             `# remove container after use` \
+        harmish/morse:morse $@                      `# run morse with given arguments`
 }
 
 morse-ros(){
-    ros_docker --xvfb harmish/morse:ros-pr2 $@  `# run ros_docker with morse:ros-pr2 image and use xvfb screen`
+    ros_docker                                      `# run ros_docker`\
+        --xvfb                                      `# use virtual screen` \
+        -v $USER_HOME/.morse:$DOCKER_HOME/.morse    `# share morse config directory` \
+        harmish/morse:ros-pr2 $@                    `# run morse:ros-pr2 with given arguments`
 }
 
 julia(){
-    local JULIA_DIR=$DOCKER_HOME
-    touch $JULIA_DIR/.julia_history                         `# create julia_history file when-not-exist`
-    mkdir -p $JULIA_DIR/.julia                              `# create julia package directory when-not-exist`
+    local JULIA_DIR=$USER_HOME
+    touch $JULIA_DIR/.julia_history                                 `# create julia_history file when-not-exist`
+    mkdir -p $JULIA_DIR/.julia                                      `# create julia package directory when-not-exist`
 
-    docker run --rm -it                                     `# remove container after use` \
-        -v $JULIA_DIR/.julia_history:/root/.julia_history   `# share julia_history` \
-        -v $JULIA_DIR/.julia:/root/.julia                   `# share julia packages` \
-        -v $(pwd):$(pwd)                                    `# mount current directory` \
-        -w $(pwd)                                           `# start workspaces at current directory` \
-        harmish/julia:latest julia $@                       `# execute julia with given arguments`
+    docker run --rm -it                                             `# remove container after use` \
+        -v $JULIA_DIR/.julia_history:$DOCKER_HOME/.julia_history    `# share julia_history` \
+        -v $JULIA_DIR/.julia:$DOCKER_HOME/.julia                    `# share julia packages` \
+        -v $(pwd):$(pwd)                                            `# mount current directory` \
+        -w $(pwd)                                                   `# start workspaces at current directory` \
+        harmish/julia:latest julia $@                               `# execute julia with given arguments`
 }
 
 node(){
@@ -387,10 +392,10 @@ node(){
 }
 
 npm(){
-    mkdir -p $DOCKER_HOME/.npm      `# create npm package directory if-not-exist`
+    mkdir -p $USER_HOME/.npm        `# create npm package directory if-not-exist`
 
     docker run --rm -it             `# remove container after use` \
-        -v $DOCKER_HOME/.npm:/.npm  `# share npm package directory` \
+        -v $USER_HOME/.npm:/.npm    `# share npm package directory` \
         -v $(pwd):$(pwd)            `# mount currnet directory` \
         -w $(pwd)                   `# start workspaces at current directory` \
         node npm $@                 `# execute npm from node-image with given arguments`
@@ -410,16 +415,16 @@ jekyll(){
 }
 
 rstudio(){
-    mkdir -p $DOCKER_HOME/.rstudio              `# create julia package directory when-not-exist`
+    mkdir -p $USER_HOME/.rstudio                        `# create julia package directory when-not-exist`
 
-    docker run --rm -t                          `# remove container after use` \
-        --name rstudio                          `# name the container` \
-        -p 8787:8787                            `# share default port of rserver` \
-        -v $DOCKER_HOME/.rstudio:/root/.rstudio `# share user-rstudio directory` \
-        -v $(pwd):/root                         `# share current directory as working directory` \
-        harmish/rstudio:latest                  `# run rstudio-server`
+    docker run --rm -t                                  `# remove container after use` \
+        --name rstudio                                  `# name the container` \
+        -p 8787:8787                                    `# share default port of rserver` \
+        -v $USER_HOME/.rstudio:$DOCKER_HOME/.rstudio    `# share user-rstudio directory` \
+        -v $(pwd):$DOCKER_HOME                          `# share current directory as working directory` \
+        harmish/rstudio:latest                          `# run rstudio-server`
 
-    docker_stop_named rstudio                   `# stop the container`
+    docker_stop_named rstudio                           `# stop the container`
 }
 
 consul() {
@@ -464,17 +469,23 @@ registry-frontend() {
 }
 
 
-## setting DOCKER_HOME and DOCKER_USERNS
+## setting USER_HOME, DOCKER_USERNS and DOCKER_HOME
 
 if hash docker 2>/dev/null; then
     if [ -d "/local/users/$USER" ]; then
-        DOCKER_HOME=/local/users/$USER
+        USER_HOME=/local/users/$USER
     else
-        DOCKER_HOME=$HOME
+        USER_HOME=$HOME
     fi
 
     DOCKER_USERNS=$(docker info 2>/dev/null | \
                     awk '$1 ~ /Root/ && $2 ~ /Dir/ { print $3; }' | \
                     awk -F/ '{ print $(NF-1); }' | \
                     awk -F. '{ if (NF == 2 && $1 + 0 == $1 && $2 + 0 == $2) print 1; else print 0; }')
+
+    if [ "$DOCKER_USERNS" -eq 0 ] ; then
+        DOCKER_HOME=$USER_HOME
+    else
+        DOCKER_HOME=$DOCKER_HOME
+    fi
 fi
