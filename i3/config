@@ -21,11 +21,11 @@
     set $workspace1 "1: "
     set $workspace2 "2: "
     set $workspace3 "3: "
-    set $workspace4 " Atom"
+    set $workspace4 " Code"
     set $workspace5 " Rviz"
     set $workspace6 "6: F"
     set $workspace7 "7: G"
-    set $workspace8 " Code"
+    set $workspace8 " Atom"
     set $workspace9 "9: I"
     set $workspace10 " Firefox"
 
@@ -184,14 +184,13 @@
 
 
 # program workspaces (use xprop to find out the class)
-    assign [class="Atom"] $workspace4
+    assign [class="Code"] $workspace4
     assign [class="Rviz"] $workspace5
-    assign [class="Code"] $workspace8
+    assign [class="Atom"] $workspace8
     assign [class="Firefox"] $workspace10
 
 
 # enabling floating windows for specific programs
-    #for_window [class="Atom"] floating enable
     for_window [class="Lxappearance"] floating enable
     for_window [class="Seahorse"] floating enable
     #for_window [class="Pavucontrol"] floating enable
