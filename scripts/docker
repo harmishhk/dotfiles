@@ -355,7 +355,7 @@ optitrack(){
 
 ros-web-devel(){
     docker run --rm -it                             `# remove container after use` \
-        -v $(pwd):/robotwebtools                    `# share directory wtih sources` \
+        -v $(pwd):/roswebtools                      `# share directory wtih sources` \
         harmish/ros:web-devel $@                    `# run ros:web-devel with given arguments`
 }
 
@@ -434,7 +434,8 @@ consul() {
     docker run -d                           `# run as daemon` \
         --name consul_server                `# name the container` \
         -p 8500:8500                        `# share default port of consul` \
-        -h consul                           `# set container hostname` \
+        -h consul                           `# give container a hostname` \
+        --restart=always                    `# restart iff container exits` \
         progrium/consul -server -bootstrap  `# run consul`
 }
 
@@ -448,8 +449,8 @@ registry() {
         --restart=always                                    `# restart iff container exits` \
         -v `pwd`/data:/var/lib/registry                     `# share the data directory` \
         -v `pwd`/certs:/certs                               `# share the certs directory` \
-        -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt  `# set http tls certs` \
-        -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key          `# set http tls key` \
+        -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt  `# setup http tls certs` \
+        -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key          `# setup http tls key` \
         registry:2                                          `# run registry`
 }
 
@@ -459,7 +460,7 @@ registry-frontend() {
 
     docker run --rm -it                                     `# remove container after use` \
         --name registry_frontend                            `# name the container` \
-        -e ENV_DOCKER_REGISTRY_HOST=$reg_host               `# set registry host` \
+        -e ENV_DOCKER_REGISTRY_HOST=$reg_host               `# setup registry host` \
         -e ENV_DOCKER_REGISTRY_PORT=5000                    `# default port of registry` \
         -e ENV_DOCKER_REGISTRY_USE_SSL=1                    `# use ssl` \
         -p 8080:80                                          `# share port of viewer` \
