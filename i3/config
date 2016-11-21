@@ -138,7 +138,7 @@
 
 
 # startup programs
-    exec_always --no-startup-id nitrogen --restore
+    exec_always --no-startup-id $HOME/.fehbg
     exec --no-startup-id compton -f -D 3
     exec --no-startup-id dunst -config $HOME/.i3/dunstrc
     exec --no-startup-id gnome-settings-daemon
