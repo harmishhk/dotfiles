@@ -63,8 +63,6 @@ alias tmux='tmux -2'
 # network computers
 alias cdl='cd /local/users/$USER'
 
-# less colors
-if [ -f /usr/share/source-highlight/src-hilite-lesspipe.sh ]; then
+# less with colors
     export LESS='-R'
-    export LESSOPEN="| /usr/share/source-highlight/src-hilite-lesspipe.sh %s"
-fi
+export LESSOPEN='|pygmentize -g %s'
