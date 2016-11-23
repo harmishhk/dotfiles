@@ -64,5 +64,5 @@ alias tmux='tmux -2'
 alias cdl='cd /local/users/$USER'
 
 # less with colors
-    export LESS='-R'
+export LESS='-R'
 export LESSOPEN='|pygmentize -g %s'

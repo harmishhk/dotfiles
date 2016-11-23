@@ -26,6 +26,6 @@ esac
 # do addtional stuff on the robots when required
 if [[ $ROBOT == "pr2" ]]; then
     # following variables are needed for the pr2 robot
-    export LC_ALL="C"
+    export LC_ALL="en_US.UTF-8"
     export ROS_ENV_LOADER=/etc/ros/$ROS_DISTRO/env.sh
 fi
