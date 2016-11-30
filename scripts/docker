@@ -246,12 +246,15 @@ ros_docker()
     declare -a copt;
     if [ -n "${overlay+1}" ]; then
         ent=("--entrypoint" "bash");
+        if [ $# -eq 0 ] ; then
+            set -- "bash"
+        fi
         if [ "$xvfb" = true ] ; then
             copt+=("-c");
-            copt+=("\"source $overlay; Xvfb -screen 0 1024x768x24 :1 >/dev/null 2>&1 & $*\"");
+            copt+=("source $overlay; Xvfb -screen 0 1024x768x24 :1 >/dev/null 2>&1 & exec $*");
         else
             copt+=("-c");
-            copt+=("source $overlay; $*");
+            copt+=("source $overlay; exec $*");
         fi
     else
         copt=($@);
