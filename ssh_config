@@ -40,3 +40,10 @@ Host mc2
     HostName maxc2.laas.fr
     IdentityFile $HOME/.ssh/laas_rsa
     ForwardX11Trusted yes
+
+# pepper computer
+Host lr
+    User hkhambha
+    HostName richard.laas.fr
+    IdentityFile $HOME/.ssh/laas_rsa
+    ForwardX11Trusted yes
