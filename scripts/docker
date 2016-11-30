@@ -251,10 +251,10 @@ ros_docker()
         fi
         if [ "$xvfb" = true ] ; then
             copt+=("-c");
-            copt+=("source $overlay; Xvfb -screen 0 1024x768x24 :1 >/dev/null 2>&1 & exec $*");
+            copt+=("source $overlay; for func in \$(declare -F | awk '{print \$3}'); do export -f \$func; done; Xvfb -screen 0 1024x768x24 :1 >/dev/null 2>&1 & exec $*");
         else
             copt+=("-c");
-            copt+=("source $overlay; exec $*");
+            copt+=("source $overlay; for func in \$(declare -F | awk '{print \$3}'); do export -f \$func; done; exec $*");
         fi
     else
         copt=($@);
