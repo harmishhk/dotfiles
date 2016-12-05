@@ -352,6 +352,10 @@ kinetic-devel(){
     ros_docker harmish/ros:kinetic-devel $@         `# run ros_docker with kinetic-devel image`
 }
 
+mummer(){
+    ros_docker harmish/mummer:indigo $@     `# run ros_docker with mummer-indigo image`
+}
+
 optitrack(){
     ros_docker harmish/robotpkg:optitrack $@        `# run ros_docker with robotpkg-optitrack image`
 }
@@ -470,6 +474,17 @@ registry-frontend() {
         konradkleine/docker-registry-frontend:v2            `# run registry frontend`
 
     docker_stop_named registry_frontend                     `# stop running container`
+}
+
+atd() {
+    docker_stop_named atd_server            `# stop old running container`
+    docker_del_stopped_named atd_server     `# delete old container with same name`
+
+    docker run -d                           `# run a daemonized container` \
+        --name atd_server                   `# name the container` \
+        -p 1049:1049                        `# share default port of atd` \
+        --restart=always                    `# restart iff container exits` \
+        harmish/atd:latest                  `# run harmish/atd:latest`
 }
 
 
