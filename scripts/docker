@@ -277,7 +277,7 @@ ros_docker()
                 copt+=("-c");
                 copt+=("exec bash --init-file /opt/ros/\$ROS_DISTRO/setup.bash");
             else
-                copt+=("$*");
+                copt+=("$@");
             fi
         fi
     fi
