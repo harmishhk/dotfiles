@@ -246,18 +246,40 @@ ros_docker()
     declare -a copt;
     if [ -n "${overlay+1}" ]; then
         ent=("--entrypoint" "bash");
-        if [ $# -eq 0 ] ; then
-            set -- "bash"
-        fi
         if [ "$xvfb" = true ] ; then
             copt+=("-c");
-            copt+=("source $overlay; for func in \$(declare -F | awk '{print \$3}'); do export -f \$func; done; Xvfb -screen 0 1024x768x24 :1 >/dev/null 2>&1 & exec $*");
+            if [ $# -eq 0 ] ; then
+                copt+=("Xvfb -screen 0 1024x768x24 :1 >/dev/null 2>&1 & exec bash --init-file $overlay");
+            else
+                copt+=("source $overlay; Xvfb -screen 0 1024x768x24 :1 >/dev/null 2>&1 & $*");
+            fi
         else
-            copt+=("-c");
-            copt+=("source $overlay; for func in \$(declare -F | awk '{print \$3}'); do export -f \$func; done; exec $*");
+            if [ $# -eq 0 ] ; then     
+                copt+=("--init-file");
+                copt+=("$overlay");
+            else
+                copt+=("-c");   
+                copt+=("source $overlay; $*");
+            fi
         fi
     else
-        copt=($@);
+        if [ "$xvfb" = true ] ; then
+            ent=("--entrypoint" "bash");
+            copt+=("-c");
+            if [ $# -eq 0 ] ; then
+                copt+=("Xvfb -screen 0 1024x768x24 :1 >/dev/null 2>&1 & exec bash --init-file /opt/ros/\$ROS_DISTRO/setup.bash");
+            else
+                copt+=("source /opt/ros/\$ROS_DISTRO/setup.bash; Xvfb -screen 0 1024x768x24 :1 >/dev/null 2>&1 & $*");
+            fi
+        else
+            if [ $# -eq 0 ] ; then
+                ent=("--entrypoint" "bash");
+                copt+=("-c");
+                copt+=("exec bash --init-file /opt/ros/\$ROS_DISTRO/setup.bash");
+            else
+                copt+=("$*");
+            fi
+        fi
     fi
 
     # set working directory to current directory if found under $USER_HOME/ros
@@ -372,8 +394,15 @@ morse(){
 }
 
 morse-ros(){
-    ros_docker                                      `# run ros_docker`\
+    ros_docker                                      `# run ros_docker` \
         --xvfb                                      `# use virtual screen` \
+        -v $USER_HOME/.morse:$DOCKER_HOME/.morse    `# share morse config directory` \
+        harmish/morse:ros-pr2 $@                    `# run morse:ros-pr2 with given arguments`
+}
+
+morse-ros-head(){
+    ros_docker                                      `# run ros_docker` \
+        -e HEADLESS=false -s                        `# open blender window` \
         -v $USER_HOME/.morse:$DOCKER_HOME/.morse    `# share morse config directory` \
         harmish/morse:ros-pr2 $@                    `# run morse:ros-pr2 with given arguments`
 }
