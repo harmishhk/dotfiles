@@ -437,19 +437,6 @@ npm(){
         node npm $@                 `# execute npm from node-image with given arguments`
 }
 
-jekyll(){
-    docker_del_stopped_named jekyll `# delete old containers with same name`
-
-    docker run --rm -t              `# remove container after use` \
-        -p 4000:4000                `# share default jekyll port` \
-        --name jekyll               `# name the container` \
-        -v $(pwd):$(pwd)            `# mount current directory` \
-        -w $(pwd)                   `# start workspaces at current directory` \
-        harmish/jekyll jekyll $@    `# execute jekyll with given arguments`
-
-    docker_stop_named jekyll
-}
-
 rstudio(){
     mkdir -p $USER_HOME/.rstudio                        `# create julia package directory when-not-exist`
 
@@ -526,14 +513,18 @@ if hash docker 2>/dev/null; then
         USER_HOME=$HOME
     fi
 
-    DOCKER_USERNS=$(docker info 2>/dev/null | \
+    # returns 1 if user-namespace remapping is enabled
+    DOCKER_USERNS=$(timeout 1 docker info 2>/dev/null | \
                     awk '$1 ~ /Root/ && $2 ~ /Dir/ { print $3; }' | \
                     awk -F/ '{ print $(NF-1); }' | \
                     awk -F. '{ if (NF == 2 && $1 + 0 == $1 && $2 + 0 == $2) print 1; else print 0; }')
 
-    if [ "$DOCKER_USERNS" -eq 0 ] ; then
+    if [ -z "$DOCKER_USERNS" ] ; then
+        echo "docker service unavailabe"
+    elif [ "$DOCKER_USERNS" -eq 0 ] ; then
         DOCKER_HOME=$USER_HOME
     else
+        # DOCKER_HOME will be empty string when user-namespace remapping is enabled
         DOCKER_HOME=$DOCKER_HOME
     fi
 fi
