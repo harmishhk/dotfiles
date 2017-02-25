@@ -62,7 +62,13 @@ alias tmux='tmux -2'
 
 # network computers
 alias cdl='cd /local/users/$USER'
+alias cdw='cd /mnt/c/Users/$USER'
 
 # less with colors
 export LESS='-R'
 export LESSOPEN='|pygmentize -g %s'
+
+# wsl
+if grep -q Microsoft /proc/version; then
+    source $SCRITPS_INSTALL/wsl
+fi
