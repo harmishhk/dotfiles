@@ -186,7 +186,9 @@
 # program workspaces (use xprop to find out the class)
     assign [class="Code"] $workspace4
     assign [class="Rviz"] $workspace5
+    assign [class="rviz"] $workspace5
     assign [class="Atom"] $workspace8
+    assign [class="git-gui"] $workspace9
     assign [class="Firefox"] $workspace10
 
 
