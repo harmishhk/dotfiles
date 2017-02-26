@@ -1,5 +1,7 @@
 [core]
+	autocrlf = false
 	editor = vim
+	eol = lf
 	excludefile = $HOME/.gitignore_global
 [merge]
 	tool = meld
