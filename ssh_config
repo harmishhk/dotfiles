@@ -13,6 +13,10 @@ Host lg
     HostName georgina.laas.fr
     IdentityFile $HOME/.ssh/laas_rsa
     ForwardX11Trusted yes
+Host lrm
+    User hkhambha
+    HostName redmine.laas.fr
+    IdentityFile $HOME/.ssh/laas_redmine_rsa
 Host ls
     User hkhambha
     HostName saint-cyprien.laas.fr
