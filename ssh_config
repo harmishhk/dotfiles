@@ -1,53 +1,67 @@
+# git hosts
+Host bitbucket.com
+    IdentityFile ~/.ssh/bitbucket_rsa
+Host github.com
+    IdentityFile ~/.ssh/github_rsa
+Host gitlab.com
+    IdentityFile ~/.ssh/gitlab_rsa
+Host harmish.visualstudio.com
+    IdentityFile ~/.ssh/vsts_rsa
+
 # computers at LAAS
 Host *.laas.fr
     User hkhambha
-    IdentityFile $HOME/.ssh/laas_rsa
+    IdentityFile ~/.ssh/laas_rsa
     ForwardX11Trusted yes
 Host lh
     User hkhambha
     HostName harmish.laas.fr
-    IdentityFile $HOME/.ssh/laas_rsa
+    IdentityFile ~/.ssh/laas_rsa
     ForwardX11Trusted yes
 Host lg
     User hkhambha
     HostName georgina.laas.fr
-    IdentityFile $HOME/.ssh/laas_rsa
+    IdentityFile ~/.ssh/laas_rsa
     ForwardX11Trusted yes
 Host lrm
     User hkhambha
     HostName redmine.laas.fr
-    IdentityFile $HOME/.ssh/laas_redmine_rsa
+    IdentityFile ~/.ssh/laas_redmine_rsa
 Host ls
     User hkhambha
     HostName saint-cyprien.laas.fr
-    IdentityFile $HOME/.ssh/laas_rsa
+    IdentityFile ~/.ssh/laas_rsa
     ForwardX11Trusted yes
 
 # pr2 computers
 Host bc1
     User hkhambha
     HostName bobc1.laas.fr
-    IdentityFile $HOME/.ssh/laas_rsa
+    IdentityFile ~/.ssh/laas_rsa
     ForwardX11Trusted yes
 Host bc2
     User hkhambha
     HostName bobc2.laas.fr
-    IdentityFile $HOME/.ssh/laas_rsa
+    IdentityFile ~/.ssh/laas_rsa
     ForwardX11Trusted yes
 Host mc1
     User hkhambha
     HostName maxc1.laas.fr
-    IdentityFile $HOME/.ssh/laas_rsa
+    IdentityFile ~/.ssh/laas_rsa
     ForwardX11Trusted yes
 Host mc2
     User hkhambha
     HostName maxc2.laas.fr
-    IdentityFile $HOME/.ssh/laas_rsa
+    IdentityFile ~/.ssh/laas_rsa
     ForwardX11Trusted yes
 
-# pepper computer
+# pepper computers
 Host lr
     User hkhambha
     HostName richard.laas.fr
-    IdentityFile $HOME/.ssh/laas_rsa
+    IdentityFile ~/.ssh/laas_rsa
     ForwardX11Trusted yes
+Host pepper
+    User nao
+    HostName mummer.laas.fr
+    PubkeyAuthentication=no
