@@ -6,7 +6,7 @@ if [ -f /etc/bashrc ]; then
 fi
 
 # if running bash on windows...
-if [[ $(uname -a) == *"Microsoft"* ]]; then
+if grep -q Microsoft /proc/version; then
 	# ...start zsh
 	exec zsh
 else

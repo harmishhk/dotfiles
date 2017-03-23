@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# user docker for windows
-export PATH=$PATH:/mnt/c/Users/$USERNAME/Software/docker
-export DOCKER_HOST=tcp://0.0.0.0:2375
+# wsl related aliases
+alias cdw='cd /mnt/c/Users/$(tr "[:lower:]" "[:upper:]" <<< ${USER:0:1})${USER:1}'
 
+# user docker for windows
+export DOCKER_HOST=tcp://0.0.0.0:2375
