@@ -204,7 +204,7 @@ ros_docker()
             -s|--screen)
                 shift;
                 envs+=("-e");
-                envs+=("DISPLAY=:0");
+                envs+=("DISPLAY=$DISPLAY");
                 envs+=("-v");
                 envs+=("/tmp/.X11-unix:/tmp/.X11-unix:ro");
                 envs+=("-e");
@@ -254,11 +254,11 @@ ros_docker()
                 copt+=("source $overlay; Xvfb -screen 0 1024x768x24 :1 >/dev/null 2>&1 & $*");
             fi
         else
-            if [ $# -eq 0 ] ; then     
+            if [ $# -eq 0 ] ; then
                 copt+=("--init-file");
                 copt+=("$overlay");
             else
-                copt+=("-c");   
+                copt+=("-c");
                 copt+=("source $overlay; $*");
             fi
         fi
