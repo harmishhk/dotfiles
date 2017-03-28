@@ -6,9 +6,6 @@ export SCRITPS_INSTALL=$HOME/dotfiles/scripts
 # default editor
 export EDITOR='vim'
 
-# docker
-source $SCRITPS_INSTALL/docker
-
 # matlab
 if ls /usr/local/matlab 1> /dev/null 2>&1; then
     # setting up matlab
@@ -71,3 +68,6 @@ export LESSOPEN='|pygmentize -g %s'
 if grep -q Microsoft /proc/version; then
     source $SCRITPS_INSTALL/wsl
 fi
+
+# docker
+source $SCRITPS_INSTALL/docker
