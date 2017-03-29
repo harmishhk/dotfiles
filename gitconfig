@@ -1,38 +1,38 @@
 [core]
-	autocrlf = false
-	editor = vim
-	eol = lf
-	excludefile = $HOME/.gitignore_global
+    autocrlf = false
+    editor = vim
+    eol = lf
+    excludefile = $HOME/.gitignore_global
 [merge]
-	tool = meld
+    tool = meld
 [alias]
-	fa = fetch --all
-	fu = fetch upstream
-	prum = pull --rebase upstream master
-	co = checkout
-	br = branch
-	ci = commit
-	st = status
-	df = diff
-	unstage = reset HEAD --
-	last = log -1 HEAD
-	visual = !gitk
-	pr = pull --rebase
-	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
-	lbr = log --oneline --abbrev-commit --branches=* --graph --decorate
-	who = shortlog -s --
+    fa = fetch --all
+    fu = fetch upstream
+    prum = pull --rebase upstream master
+    co = checkout
+    br = branch
+    ci = commit
+    st = status
+    df = diff
+    unstage = reset HEAD --
+    last = log -1 HEAD
+    visual = !gitk
+    pr = pull --rebase
+    lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+    lbr = log --oneline --abbrev-commit --branches=* --graph --decorate
+    who = shortlog -s --
 [color]
-	ui = auto
+    ui = auto
 [http]
-	sslVerify = no
+    sslVerify = no
 [user]
-	name = harmish khambhaita
-	email = harmish@laas.fr
+    name = harmish khambhaita
+    email = harmish@laas.fr
 [push]
-	default = nothing
+    default = nothing
 [mergetool]
-	keepBackup = false
+    keepBackup = false
 [filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	required = true
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    required = true
