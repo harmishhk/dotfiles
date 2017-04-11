@@ -2,6 +2,8 @@
 *
 
 # except these files
+!exec
+!exec/**
 !i3
 !i3/**
 !scripts

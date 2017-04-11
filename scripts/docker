@@ -89,21 +89,9 @@ docker_run()
 ## container aliases
 
 # for common latex compilation
-latexmk()
-{
-    docker_del_stopped_named latex                      `# delete old containers with same name`
-
-    docker run --rm -it                                 `# remove container after use` \
-        -v $(pwd):/latex                                `# share current directory as latex base directory` \
-        --name latex                                    `# name the container, so we can delete later` \
-        --net=none                                      `# no internet required inside the container` \
-        harmish/latex latexmk --pdf -outdir=out $@      `# run latexmk inside latex container by setting default outdir`
-
-    docker_stop_named latex                             `# stop the container, when not already stopped`
-}
 lmk()
 {
-    latexmk $@
+   latexmk --pdf -outdir=out $@     `# run latexmk by setting default outdir`
 }
 
 latex()
