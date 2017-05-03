@@ -3,4 +3,4 @@ docker run --rm                 `# remove container after use` \
     -i                          `# interactive mode` \
     -v $(pwd -P):$(pwd -P)      `# share current directory` \
     -w $(pwd -P)                `# make current directory as latex workding directory` \
-    harmish/latex chktex "$@"   `# run latexmk container passing all user args`
+    harmish/latex chktex "$@"   `# run chktex container passing all user args`
