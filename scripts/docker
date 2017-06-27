@@ -412,7 +412,7 @@ node(){
     docker run --rm -it             `# remove container after use` \
         -v $(pwd):$(pwd)            `# mount currnet directory` \
         -w $(pwd)                   `# start workspaces at current directory` \
-        node node $@                `# execute node with given arguments`
+        harmish/node node $@        `# execute node with given arguments`
 }
 
 npm(){
@@ -422,7 +422,7 @@ npm(){
         -v $USER_HOME/.npm:/.npm    `# share npm package directory` \
         -v $(pwd):$(pwd)            `# mount currnet directory` \
         -w $(pwd)                   `# start workspaces at current directory` \
-        node npm $@                 `# execute npm from node-image with given arguments`
+        harmish/node npm $@         `# execute npm from node-image with given arguments`
 }
 
 rstudio(){
