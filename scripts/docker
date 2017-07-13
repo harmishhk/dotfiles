@@ -425,6 +425,14 @@ npm(){
         harmish/node npm $@         `# execute npm from node-image with given arguments`
 }
 
+hugo(){
+    docker run --rm -it             `# remove container after use` \
+        -v $(pwd):$(pwd)            `# mount currnet directory` \
+        -w $(pwd)                   `# start workspaces at current directory` \
+        -p 1313:1313                `# share default hugo port` \
+        harmish/hugo hugo $@        `# execute hugo from hugo-image with given arguments`
+}
+
 rstudio(){
     mkdir -p $USER_HOME/.rstudio                        `# create julia package directory when-not-exist`
 
