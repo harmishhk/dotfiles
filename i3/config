@@ -237,5 +237,5 @@ bar {
 }
 
 
-## resolution related settings
-#exec xrandr
+# resolution related settings
+exec ~/.i3/highdpi
