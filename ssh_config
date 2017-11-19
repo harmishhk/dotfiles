@@ -5,7 +5,7 @@ Host github.com
     IdentityFile ~/.ssh/github_rsa
 Host gitlab.com
     IdentityFile ~/.ssh/gitlab_rsa
-Host harmish.visualstudio.com
+Host vs-ssh.visualstudio.com
     IdentityFile ~/.ssh/vsts_rsa
 
 # computers at LAAS
