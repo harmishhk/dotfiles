@@ -26,8 +26,8 @@
 [http]
     sslVerify = no
 [user]
-    name = harmish khambhaita
-    email = harmish@laas.fr
+    name = Harmish Khambhaita
+    email = harmish.khambhaita@ensta-paristech.fr
 [push]
     default = nothing
 [mergetool]
@@ -36,3 +36,5 @@
     clean = git-lfs clean -- %f
     smudge = git-lfs smudge -- %f
     required = true
+[credential]
+	helper = cache --timeout=60
