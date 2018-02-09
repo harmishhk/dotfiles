@@ -65,3 +65,21 @@ Host pepper
     User nao
     HostName mummer.laas.fr
     PubkeyAuthentication=no
+
+# computers at ENSTA
+Host er
+    User khambhaita
+    HostName relais.ensta.fr
+    IdentityFile ~/.ssh/ensta_rsa
+
+Host ei
+    User harmish
+    HostName idefix.ensta.fr
+    IdentityFile ~/.ssh/ensta_local_rsa
+    ProxyCommand ssh er nc %h %p
+    ForwardX11Trusted yes
+
+Host !relais.ensta.fr !idefix.ensta.fr *.ensta.fr
+    User khambhaita
+    PreferredAuthentications password
+    ProxyCommand ssh er nc %h %p
