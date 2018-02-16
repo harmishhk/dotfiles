@@ -71,6 +71,7 @@ Host er
     User khambhaita
     HostName relais.ensta.fr
     IdentityFile ~/.ssh/ensta_rsa
+    ForwardX11Trusted yes
 
 Host ei
     User harmish
@@ -79,7 +80,14 @@ Host ei
     ProxyCommand ssh er nc %h %p
     ForwardX11Trusted yes
 
-Host !relais.ensta.fr !idefix.ensta.fr *.ensta.fr
+Host es
+    User khambhaita
+    HostName salle.ensta.fr
+    IdentityFile ~/.ssh/ensta_local_rsa
+    ProxyCommand ssh er nc %h %p
+    ForwardX11Trusted yes
+
+Host !relais.ensta.fr !idefix.ensta.fr !salle.ensta.fr *.ensta.fr
     User khambhaita
     PreferredAuthentications password
     ProxyCommand ssh er nc %h %p
