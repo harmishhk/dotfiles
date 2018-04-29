@@ -107,6 +107,19 @@ latex()
     docker_stop_named latex                             `# stop the container, when not already stopped`
 }
 
+pandoc()
+{
+    docker_del_stopped_named pandoc                     `# delete old containers with same name`
+
+    docker run --rm -it                                 `# remove container after use` \
+        -v $(pwd):/pandoc                               `# share current directory as latex base directory` \
+        --name pandoc                                   `# name the container, so we can delete later` \
+        --net=none                                      `# no internet required inside the container` \
+        harmish/pandoc pandoc $@                        `# run latex inside latex container`
+
+    docker_stop_named pandoc                            `# stop the container, when not already stopped`
+}
+
 
 # generic function for ros related containers
 ros_docker()
