@@ -79,6 +79,7 @@ Host ei
     IdentityFile ~/.ssh/ensta_local_rsa
     ProxyCommand ssh er nc %h %p
     ForwardX11Trusted yes
+#ssh -L 1049:0.0.0.0:1049 ei
 
 Host es
     User khambhaita
