@@ -18,15 +18,15 @@
     set $base0F #a3685a
 
     # workspace icons
-    set $workspace1 "1: "
-    set $workspace2 "2: "
-    set $workspace3 "3: "
-    set $workspace4 " Code"
-    set $workspace5 " Rviz"
-    set $workspace6 "6: F"
-    set $workspace7 "7: G"
-    set $workspace8 " Atom"
-    set $workspace9 "9: I"
+    set $workspace1 " T1"
+    set $workspace2 " T2"
+    set $workspace3 " T3"
+    set $workspace4 " Code"
+    set $workspace5 " Rviz"
+    set $workspace6 " 6"
+    set $workspace7 " 7"
+    set $workspace8 " 8"
+    set $workspace9 " 9"
     set $workspace10 " Firefox"
 
 
@@ -220,7 +220,7 @@ bar {
     status_command i3blocks -c $HOME/.i3/i3blocks
 
     # fonts for the status bar
-    font pango: Selawik 9, FontAwesome 8
+    font pango: FontAwesome 9
 
     # disable try icons like keyboard
     tray_output none

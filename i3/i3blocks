@@ -1,20 +1,15 @@
 # defaults
-separator_block_width=16
-#color=#ffffff
-align=center
 command=$HOME/.config/i3blocks/scripts/$BLOCK_NAME
-
-#[cpu_usage]
-#label=
-#interval=5
+separator_block_width=15
+markup=none
 
 [load_average]
-label=
-interval=5
+label=
+interval=10
 
 [memory]
-label=
-interval=5
+label=
+interval=10
 
 [disk]
 label=
@@ -25,7 +20,7 @@ label=
 interval=30
 
 [iface]
-label=
+label=
 interval=30
 
 #[date]
@@ -40,6 +35,3 @@ command=date +"%l:%M %p"
 label=
 interval=1
 
-#[keyboard]
-#label=
-#interval=1
