@@ -3,12 +3,3 @@
 # wsl related aliases
 alias cdw='cd /mnt/c/Users/$(tr "[:lower:]" "[:upper:]" <<< ${USER:0:1})${USER:1}'
 
-# user docker for windows
-export DOCKER_HOST=tcp://0.0.0.0:2375
-
-docker_for_windows_volume_remap()
-{
-    docker run -it --privileged --pid=host debian nsenter -t 1 -m -u -n -i \
-        sh -c "mkdir -p /mnt && ln -s /c /mnt/c"
-}
-
