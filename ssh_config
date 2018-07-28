@@ -1,10 +1,10 @@
 # git hosts
 Host bitbucket.com
-    IdentityFile ~/.ssh/bitbucket_rsa
+    IdentityFile ~/.ssh/bb_rsa
 Host github.com
-    IdentityFile ~/.ssh/github_rsa
+    IdentityFile ~/.ssh/gh_rsa
 Host gitlab.com
-    IdentityFile ~/.ssh/gitlab_rsa
+    IdentityFile ~/.ssh/gl_rsa
 Host vs-ssh.visualstudio.com
-    IdentityFile ~/.ssh/vsts_rsa
+    IdentityFile ~/.ssh/vs_rsa
 
