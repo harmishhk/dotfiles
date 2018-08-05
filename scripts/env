@@ -71,3 +71,5 @@ fi
 
 # docker
 source $SCRITPS_INSTALL/docker
+
+export PATH=$PATH:$HOME/.local/bin

@@ -1,0 +1,6 @@
+#!/bin/bash
+docker run --rm                     `# remove container after use` \
+    -i                              `# interactive mode` \
+    -v $(pwd -P):$(pwd -P)          `# share current directory` \
+    -w $(pwd -P)                    `# make current directory as latex working directory` \
+    harmish/latex latexindent "$@"  `# run latexindent container passing all user args`
