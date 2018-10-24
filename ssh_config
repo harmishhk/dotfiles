@@ -8,3 +8,6 @@ Host gitlab.com
 Host vs-ssh.visualstudio.com
     IdentityFile ~/.ssh/vs_rsa
 
+# ANYbotics
+Host anymal-*
+    IdentityFile ~/.ssh/ab_rsa
