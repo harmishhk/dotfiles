@@ -27,14 +27,10 @@
     sslVerify = no
 [user]
     name = Harmish Khambhaita
-    email = harmish.khambhaita@ensta-paristech.fr
+    email = hkhambhaita@anybotics.com
 [push]
     default = nothing
 [mergetool]
     keepBackup = false
-[filter "lfs"]
-    clean = git-lfs clean -- %f
-    smudge = git-lfs smudge -- %f
-    required = true
 [credential]
 	helper = cache --timeout=60
