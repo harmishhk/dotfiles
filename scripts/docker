@@ -153,9 +153,9 @@ ros_docker()
                 fi
                 ;;
             # add given environment variables to the container
-            -g|--cuda)
+            -g|--gpu)
                 shift;
-                envs+=($(curl -s http://localhost:3476/docker/cli));
+                envs+=("--runtime=nvidia");
                 ;;
             # set ROS_MASTER_URI to given IP or HOSTNAME
             --master)
@@ -209,7 +209,7 @@ ros_docker()
                 envs+=("-v");
                 envs+=("/tmp/.X11-unix:/tmp/.X11-unix:ro");
                 envs+=("-e");
-                envs+=("QT_GRAPHICSSYSTEM=native");
+                envs+=("QT_LOGGING_RULES=’*.debug=false’");
                 ;;
             # add more volumes to the container
             -v|--volume)
