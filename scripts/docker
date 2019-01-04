@@ -290,15 +290,21 @@ ros_docker()
         local ros_workdir="/";
     fi
 
-    mkdir -p $USER_HOME/.ros                                        `# create ros settings directory when-not-exist`
+    touch $USER_HOME/.bash_history                                  `# create bash history file when-not-exist`
     mkdir -p $USER_HOME/.config/catkin                              `# create catkin config directory when-not-exist`
-    mkdir -p $USER_HOME/.rviz                                       `# create rviz config directory when-not-exist`
+    mkdir -p $USER_HOME/.gazebo                                     `# create gazebo settings directory when-not-exist`
+    mkdir -p $USER_HOME/.ros                                        `# create ros settings directory when-not-exist`
+    mkdir -p $USER_HOME/.rviz                                       `# create rviz settings directory when-not-exist`
+    mkdir -p $USER_HOME/.sdformat                                   `# create sdformat settings directory when-not-exist`
 
     docker_run --rm -it                                             `# remove container after use` \
         -v /etc/localtime:/etc/localtime:ro                         `# use host clock ` \
-        -v $USER_HOME/.ros:$DOCKER_HOME/.ros                        `# sahre ros settings directory, required by catking build` \
+        -v $USER_HOME/.bash_history:$DOCKER_HOME/.bash_history      `# share bash history` \
         -v $USER_HOME/.config/catkin:$DOCKER_HOME/.config/catkin    `# share catkin config directory, required by catking build` \
+        -v $USER_HOME/.gazebo:$DOCKER_HOME/.gazebo                  `# sahre gazebo settings directory` \
+        -v $USER_HOME/.ros:$DOCKER_HOME/.ros                        `# sahre ros settings directory` \
         -v $USER_HOME/.rviz:$DOCKER_HOME/.rviz                      `# share rviz config directory` \
+        -v $USER_HOME/.sdformat:$DOCKER_HOME/.sdformat              `# share sdformat config directory` \
         -v $USER_HOME/ros:$USER_HOME/ros                            `# sharing all ros workspaces, with same path under host` \
         $envs                                                       `# setting additional evnironment variables` \
         -e SHELL=/bin/bash                                          `# setting deafult shell, needed by catkin` \
@@ -534,6 +540,6 @@ if hash docker 2>/dev/null; then
         DOCKER_HOME=$USER_HOME
     else
         # DOCKER_HOME will be empty string when user-namespace remapping is enabled
-        DOCKER_HOME=$DOCKER_HOME
+        DOCKER_HOME=/root
     fi
 fi
