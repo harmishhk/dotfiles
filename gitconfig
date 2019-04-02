@@ -34,3 +34,5 @@
     keepBackup = false
 [credential]
 	helper = cache --timeout=60
+[include]
+    path = ~/.gitconfig_robot
