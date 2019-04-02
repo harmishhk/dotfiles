@@ -292,6 +292,7 @@ ros_docker()
 
     touch $USER_HOME/.bash_history                                  `# create bash history file when-not-exist`
     mkdir -p $USER_HOME/.config/catkin                              `# create catkin config directory when-not-exist`
+    mkdir -p $USER_HOME/.config/cmake_clang_tools                   `# create cmake_clang_tools config directory when-not-exist`
     mkdir -p $USER_HOME/.gazebo                                     `# create gazebo settings directory when-not-exist`
     mkdir -p $USER_HOME/.ros                                        `# create ros settings directory when-not-exist`
     mkdir -p $USER_HOME/.rviz                                       `# create rviz settings directory when-not-exist`
@@ -301,6 +302,7 @@ ros_docker()
         -v /etc/localtime:/etc/localtime:ro                         `# use host clock ` \
         -v $USER_HOME/.bash_history:$DOCKER_HOME/.bash_history      `# share bash history` \
         -v $USER_HOME/.config/catkin:$DOCKER_HOME/.config/catkin    `# share catkin config directory, required by catking build` \
+        -v $USER_HOME/.config/cmake_clang_tools:$DOCKER_HOME/.config/cmake_clang_tools `# share cmake_clang_tools config directory` \
         -v $USER_HOME/.gazebo:$DOCKER_HOME/.gazebo                  `# sahre gazebo settings directory` \
         -v $USER_HOME/.ros:$DOCKER_HOME/.ros                        `# sahre ros settings directory` \
         -v $USER_HOME/.rviz:$DOCKER_HOME/.rviz                      `# share rviz config directory` \
