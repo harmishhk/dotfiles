@@ -52,7 +52,9 @@ BASE16_SHELL="$HOME/.config/base16-shell/base16-tomorrow-night.sh"
 function ssht {
     ssh -t $@ 'tmux new'
 }
-compdef '_dispatch ssh ssh' ssht
+if command -v compdef >/dev/null 2>&1; then
+    compdef '_dispatch ssh ssh' ssht
+fi
 
 # tmux
 alias tmux='tmux -2'
