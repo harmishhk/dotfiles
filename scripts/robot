@@ -35,10 +35,10 @@ anymal () {
     version=$1
     export ROS_MASTER_URI=http://anymal-$version-lpc:11311
     export ROS_IP=`ifconfig | grep 'inet 192.168' | awk '{print $2}'`
-    alias anymal_lpc='ssh $USER@anymal-$version-lpc'
-    alias anymal_npc='ssh $USER@anymal-$version-npc'
-    alias anymal_apc='ssh $USER@anymal-$version-apc'
-    alias anymal_opc='ssh $USER@anymal-$version-opc'
+    alias anymal_lpc='ssht $USER@anymal-$version-lpc'
+    alias anymal_npc='ssht $USER@anymal-$version-npc'
+    alias anymal_apc='ssht $USER@anymal-$version-apc'
+    alias anymal_opc='ssht $USER@anymal-$version-opc'
     if ! grep -q "anymal-$version-lpc" /etc/chrony/chrony.conf; then
         sudo sed -i "s/anymal-.*-lpc/anymal-$version-lpc/" /etc/chrony/chrony.conf
         sudo service chrony restart # can take some time if changing robots infrequently leave commented
