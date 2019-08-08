@@ -155,7 +155,7 @@ ros_docker()
             # add given environment variables to the container
             -g|--gpu)
                 shift;
-                envs+=("--runtime=nvidia");
+                envs+=("--gpus=all");
                 ;;
             # set ROS_MASTER_URI to given IP or HOSTNAME
             --master)
