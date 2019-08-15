@@ -12,6 +12,7 @@
 !install.sh
 !README.md
 !ssh_config
+!terminator_config
 !tmux.conf
 !uninstall.sh
 !vimrc
