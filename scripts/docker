@@ -227,6 +227,13 @@ ros_docker()
                 envs+=("DISPLAY=:1");
                 local xvfb=true;
                 ;;
+            # use virtual screen for the container, that has gui elements
+            -h|--host)
+                shift;
+                envs+=("--userns=host");
+                envs+=("--net=host");
+                envs+=("--privileged");
+                ;;
             # collect remaining arguments
             *)
                 args+=($1);
