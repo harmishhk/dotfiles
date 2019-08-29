@@ -13,6 +13,7 @@ ln -s -f $DIR/ssh_config $HOME/.ssh/config
 ln -s -f $DIR/terminator_config $HOME/.config/terminator/config
 ln -s -f $DIR/tmux.conf $HOME/.tmux.conf
 ln -s -f $DIR/vimrc $HOME/.vimrc
+echo | echo | vim +PluginInstall +qall &>/dev/null
 ln -s -f $DIR/zshrc $HOME/.zshrc
 
 # create symbolic links for all execs
