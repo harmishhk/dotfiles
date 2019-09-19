@@ -538,7 +538,7 @@ if hash docker 2>/dev/null; then
     fi
 
     # returns 1 if user-namespace remapping is enabled
-    DOCKER_USERNS=$(timeout 1 docker info 2>/dev/null | \
+    DOCKER_USERNS=$(timeout 2 docker info 2>/dev/null | \
                     awk '$1 ~ /Docker/ && $2 ~ /Root/ && $3 ~ /Dir/ { print $4; }' | \
                     awk -F/ '{ print $NF; }' | \
                     awk -F. '{ if (NF == 2 && $1 + 0 == $1 && $2 + 0 == $2) print 1; else print 0; }')
