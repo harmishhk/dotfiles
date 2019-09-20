@@ -13,9 +13,6 @@ if ls /usr/local/matlab 1> /dev/null 2>&1; then
     export PATH=$PATH:$MATLABHOME/bin
 fi
 
-# robot
-source $SCRITPS_INSTALL/robot
-
 # robotpkg
 function use_robotpkg {
     if [ $# == 0 ]; then
