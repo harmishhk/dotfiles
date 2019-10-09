@@ -124,6 +124,7 @@ pandoc()
 # generic function for ros related containers
 ros_docker()
 {
+    local DOCKER_HOME_LOCAL=$DOCKER_HOME
     # check to see if at least image name was specified
     if [[ $# -lt 1 ]]; then
         echo "$(tput setaf 1)error: ros_docker called without image name";
@@ -192,7 +193,7 @@ ros_docker()
                     shift;
                 fi
                 ;;
-            # pulish container ports
+            # publish container ports
             -p)
                 shift;
                 if [ -n "$1" ]; then
@@ -206,10 +207,22 @@ ros_docker()
                 shift;
                 envs+=("-e");
                 envs+=("DISPLAY=$DISPLAY");
+                envs+=("-e");
+                envs+=("XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR");
                 envs+=("-v");
                 envs+=("/tmp/.X11-unix:/tmp/.X11-unix:ro");
                 envs+=("-e");
                 envs+=("QT_LOGGING_RULES=’*.debug=false’");
+                ;;
+            # configure user
+            -u|--user)
+                shift;
+                if [ -n "$1" ]; then
+                    envs+=("-u");
+                    envs+=("$1");
+                    DOCKER_HOME_LOCAL="/home/$1"
+                    shift;
+                fi
                 ;;
             # add more volumes to the container
             -v|--volume)
@@ -297,30 +310,30 @@ ros_docker()
         local ros_workdir="/";
     fi
 
-    touch $USER_HOME/.bash_history                                  `# create bash history file when-not-exist`
-    mkdir -p $USER_HOME/.config/catkin                              `# create catkin config directory when-not-exist`
-    mkdir -p $USER_HOME/.config/cmake_clang_tools                   `# create cmake_clang_tools config directory when-not-exist`
-    mkdir -p $USER_HOME/.gazebo                                     `# create gazebo settings directory when-not-exist`
-    mkdir -p $USER_HOME/.ros                                        `# create ros settings directory when-not-exist`
-    mkdir -p $USER_HOME/.rviz                                       `# create rviz settings directory when-not-exist`
-    mkdir -p $USER_HOME/.sdformat                                   `# create sdformat settings directory when-not-exist`
+    touch $USER_HOME/.bash_history                                                              `# create bash history file when-not-exist`
+    mkdir -p $USER_HOME/.config/catkin                                                          `# create catkin config directory when-not-exist`
+    mkdir -p $USER_HOME/.config/cmake_clang_tools                                               `# create cmake_clang_tools config directory when-not-exist`
+    mkdir -p $USER_HOME/.gazebo                                                                 `# create gazebo settings directory when-not-exist`
+    mkdir -p $USER_HOME/.ros                                                                    `# create ros settings directory when-not-exist`
+    mkdir -p $USER_HOME/.rviz                                                                   `# create rviz settings directory when-not-exist`
+    mkdir -p $USER_HOME/.sdformat                                                               `# create sdformat settings directory when-not-exist`
 
-    docker_run --rm -it                                             `# remove container after use` \
-        -v /etc/localtime:/etc/localtime:ro                         `# use host clock ` \
-        -v $USER_HOME/.bash_history:$DOCKER_HOME/.bash_history      `# share bash history` \
-        -v $USER_HOME/.config/catkin:$DOCKER_HOME/.config/catkin    `# share catkin config directory, required by catking build` \
-        -v $USER_HOME/.config/cmake_clang_tools:$DOCKER_HOME/.config/cmake_clang_tools `# share cmake_clang_tools config directory` \
-        -v $USER_HOME/.gazebo:$DOCKER_HOME/.gazebo                  `# sahre gazebo settings directory` \
-        -v $USER_HOME/.ros:$DOCKER_HOME/.ros                        `# sahre ros settings directory` \
-        -v $USER_HOME/.rviz:$DOCKER_HOME/.rviz                      `# share rviz config directory` \
-        -v $USER_HOME/.sdformat:$DOCKER_HOME/.sdformat              `# share sdformat config directory` \
-        -v $USER_HOME/ros:$USER_HOME/ros                            `# sharing all ros workspaces, with same path under host` \
-        --ulimit rtprio=99:99                                       `# enable higher process priorities` \
-        $envs                                                       `# setting additional evnironment variables` \
-        -e SHELL=/bin/bash                                          `# setting deafult shell, needed by catkin` \
-        -w $ros_workdir                                             `# setting ros working directory` \
-        $ent                                                        `# setting the entrypoint` \
-        $img $copt                                                  `# passing remaining arguments`
+    docker_run --rm -it                                                                         `# remove container after use` \
+        -v /etc/localtime:/etc/localtime:ro                                                     `# use host clock ` \
+        -v $USER_HOME/.bash_history:$DOCKER_HOME_LOCAL/.bash_history                            `# share bash history` \
+        -v $USER_HOME/.config/catkin:$DOCKER_HOME_LOCAL/.config/catkin                          `# share catkin config directory, required by catking build` \
+        -v $USER_HOME/.config/cmake_clang_tools:$DOCKER_HOME_LOCAL/.config/cmake_clang_tools    `# share cmake_clang_tools config directory` \
+        -v $USER_HOME/.gazebo:$DOCKER_HOME_LOCAL/.gazebo                                        `# sahre gazebo settings directory` \
+        -v $USER_HOME/.ros:$DOCKER_HOME_LOCAL/.ros                                              `# sahre ros settings directory` \
+        -v $USER_HOME/.rviz:$DOCKER_HOME_LOCAL/.rviz                                            `# share rviz config directory` \
+        -v $USER_HOME/.sdformat:$DOCKER_HOME_LOCAL/.sdformat                                    `# share sdformat config directory` \
+        -v $USER_HOME/ros:$USER_HOME/ros                                                        `# sharing all ros workspaces, with same path under host` \
+        --ulimit rtprio=99:99                                                                   `# enable higher process priorities` \
+        $envs                                                                                   `# setting additional evnironment variables` \
+        -e SHELL=/bin/bash                                                                      `# setting deafult shell, needed by catkin` \
+        -w $ros_workdir                                                                         `# setting ros working directory` \
+        $ent                                                                                    `# setting the entrypoint` \
+        $img $copt                                                                              `# passing remaining arguments`
 }
 
 indigo-base(){
