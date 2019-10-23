@@ -136,14 +136,6 @@ ros_docker()
     declare -a envs;
     while [ $# -gt 0 ]; do
         case "$1" in
-            # user networking of given container (name)
-            --netc)
-                shift;
-                if [ -n "$1" ]; then
-                    envs+=("--net=container:$1");
-                    shift;
-                fi
-                ;;
             # add given environment variables to the container
             -e|--env)
                 shift;
