@@ -1,0 +1,25 @@
+#!/bin/sh
+
+# path for scripts, will be replaced at installation
+export SCRITPS_INSTALL=$HOME/dotfiles/scripts
+
+# default editor
+export EDITOR='vim'
+
+# ssh with tmux
+function ssht {
+    ssh -t $@ 'tmux new'
+}
+if command -v compdef >/dev/null 2>&1; then
+    compdef '_dispatch ssh ssh' ssht
+fi
+
+# tmux
+alias tmux='tmux -2'
+#alias tmuxh='tmux -2 new -s harmish'
+
+# less with colors
+export LESS='-R'
+export LESSOPEN='|pygmentize -g %s'
+
+export PATH=$PATH:$HOME/.local/bin

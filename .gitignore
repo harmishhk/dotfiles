@@ -10,6 +10,7 @@
 !scripts/**
 !bashrc
 !install.sh
+!install_container.sh
 !README.md
 !ssh_config
 !terminator_config
