@@ -23,8 +23,3 @@ for exec in $DIR/exec/*; do
 done
 
 sed -i "4s?.*?export SCRITPS_INSTALL=$DIR\/scripts?" $DIR/scripts/env
-
-# put additional git config only on robots
-if [[ $(hostname -s) = anymal* ]]; then
-    ln -s -f $DIR/gitconfig_robot $HOME/.gitconfig_robot
-fi
