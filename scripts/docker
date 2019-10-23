@@ -158,6 +158,13 @@ ros_docker()
                 shift;
                 envs+=("--gpus=all");
                 ;;
+            # use virtual screen for the container, that has gui elements
+            -h|--host)
+                shift;
+                envs+=("--userns=host");
+                envs+=("--net=host");
+                envs+=("--privileged");
+                ;;
             # set ROS_MASTER_URI to given IP or HOSTNAME
             --master)
                 shift;
@@ -182,6 +189,14 @@ ros_docker()
                 shift;
                 if [ -n "$1" ]; then
                     envs+=("--net=$1");
+                    shift;
+                fi
+                ;;
+            # user networking of given container (name)
+            --netc)
+                shift;
+                if [ -n "$1" ]; then
+                    envs+=("--net=container:$1");
                     shift;
                 fi
                 ;;
@@ -239,13 +254,6 @@ ros_docker()
                 envs+=("-e");
                 envs+=("DISPLAY=:1");
                 local xvfb=true;
-                ;;
-            # use virtual screen for the container, that has gui elements
-            -h|--host)
-                shift;
-                envs+=("--userns=host");
-                envs+=("--net=host");
-                envs+=("--privileged");
                 ;;
             # collect remaining arguments
             *)
