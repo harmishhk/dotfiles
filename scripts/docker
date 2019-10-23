@@ -328,8 +328,6 @@ ros_docker()
         -v $USER_HOME/.rviz:$DOCKER_HOME_LOCAL/.rviz                                            `# share rviz config directory` \
         -v $USER_HOME/.sdformat:$DOCKER_HOME_LOCAL/.sdformat                                    `# share sdformat config directory` \
         -v $USER_HOME/ros:$USER_HOME/ros                                                        `# sharing all ros workspaces, with same path under host` \
-        -v $USER_HOME/git:$USER_HOME/git                                                        `# sharing all git repositories, with same path under host` \
-        --ulimit rtprio=99:99                                                                   `# enable higher process priorities` \
         $envs                                                                                   `# setting additional evnironment variables` \
         -e SHELL=/bin/bash                                                                      `# setting deafult shell, needed by catkin` \
         -w $ros_workdir                                                                         `# setting ros working directory` \
