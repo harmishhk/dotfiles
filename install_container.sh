@@ -11,4 +11,4 @@ ln -s -f $DIR/vimrc $HOME/.vimrc
 echo | echo | vim +PluginInstall +qall &>/dev/null
 
 sed -i "4s?.*?export SCRITPS_INSTALL=$DIR\/scripts?" $DIR/scripts/env_container
-echo 'source $HOME/.env' >> ~/.bashrc
+echo 'source $HOME/.env_container' >> ~/.bashrc
