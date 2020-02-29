@@ -565,3 +565,6 @@ if hash docker 2>/dev/null; then
         DOCKER_HOME=/root
     fi
 fi
+
+# Enable docker buildkit
+export DOCKER_BUILDKIT=1
