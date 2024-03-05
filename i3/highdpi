@@ -1,7 +1,0 @@
-#!/bin/bash
-
-if [[ $(xrandr | fgrep '*' | cut -c4-7) > 2000 ]]; then
-    gsettings set org.gnome.desktop.interface scaling-factor 2
-else
-    gsettings set org.gnome.desktop.interface scaling-factor 1
-fi
