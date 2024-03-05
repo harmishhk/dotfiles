@@ -1,13 +1,3 @@
 # git hosts
-Host bitbucket.com
-    IdentityFile ~/.ssh/bb_rsa
 Host github.com
-    IdentityFile ~/.ssh/gh_rsa
-Host gitlab.com
-    IdentityFile ~/.ssh/gl_rsa
-Host vs-ssh.visualstudio.com
-    IdentityFile ~/.ssh/vs_rsa
-
-# ANYbotics
-Host anymal-*
-    IdentityFile ~/.ssh/ab_rsa
+    IdentityFile ~/.ssh/github
