@@ -3,7 +3,7 @@
 DIR="$(dirname "$(readlink -f ${BASH_SOURCE[0]})")"
 
 # create symbolic links for dotfiles
-ln -s -f $DIR/bashrc $HOME/.bashrc
+# ln -s -f $DIR/bashrc $HOME/.bashrc
 ln -s -f $DIR/scripts/env $HOME/.env
 ln -s -f $DIR/gitconfig $HOME/.gitconfig
 ln -s -f $DIR/gitignore_global $HOME/.gitignore_global

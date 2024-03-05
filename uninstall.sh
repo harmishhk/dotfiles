@@ -1,6 +1,6 @@
 #!/bin/sh
 
-rm $HOME/.bashrc
+# rm $HOME/.bashrc
 rm $HOME/.env
 rm $HOME/.gitconfig
 rm $HOME/.gitignore_global
