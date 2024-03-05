@@ -13,38 +13,6 @@ if ls /usr/local/matlab 1> /dev/null 2>&1; then
     export PATH=$PATH:$MATLABHOME/bin
 fi
 
-# robotpkg
-function use_robotpkg {
-    if [ $# == 0 ]; then
-        source $SCRITPS_INSTALL/robotpkg.sh install
-    elif [ $# == 1 ]; then
-        if [[ $1 == 'devel' || $1 == 'install' ]]; then
-            source $SCRITPS_INSTALL/robotpkg.sh $1
-        else
-            echo -e "\e[0;31m$1\e[0m" "error: please call use_robotpkg with only install or devel as argument"
-        fi
-    else
-        echo -e "\e[0;31m$1\e[0m" "error: please call use_robotpkg with only 0 or 1 argument"
-    fi
-}
-
-# ros
-if [ -d "/opt/ros" ]; then
-    alias rosmaster_bob="export ROS_MASTER_URI=http://bobc1.laas.fr:11311"
-    alias rosmaster_max="export ROS_MASTER_URI=http://maxc1.laas.fr:11311"
-    alias rosmaster_sc1="export ROS_MASTER_URI=http://spencer-pc1:11311"
-    alias rosmaster_sc2="export ROS_MASTER_URI=http://spencer-pc2:11311"
-    alias rosmaster_none="unset ROS_MASTER_URI"
-fi
-
-# theme
-if [ ! -f $HOME/.config/base16-shell/base16-tomorrow-night.sh ]; then
-    mkdir -p $HOME/.config/base16-shell
-    wget -O $HOME/.config/base16-shell/base16-tomorrow-night.sh https://raw.githubusercontent.com/chriskempson/base16-shell/master/scripts/base16-tomorrow-night.sh
-fi
-BASE16_SHELL="$HOME/.config/base16-shell/base16-tomorrow-night.sh"
-[[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
-
 # ssh with tmux
 function ssht {
     ssh -t $@ 'tmux new'
@@ -55,7 +23,6 @@ fi
 
 # tmux
 alias tmux='tmux -2'
-#alias tmuxh='tmux -2 new -s harmish'
 
 # network computers
 alias cdl='cd /local/users/$USER'
@@ -63,11 +30,6 @@ alias cdl='cd /local/users/$USER'
 # less with colors
 export LESS='-R'
 export LESSOPEN='|pygmentize -g %s'
-
-# wsl
-if grep -q Microsoft /proc/version; then
-    source $SCRITPS_INSTALL/wsl
-fi
 
 # docker
 source $SCRITPS_INSTALL/docker
