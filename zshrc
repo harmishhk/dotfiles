@@ -5,7 +5,7 @@ export ZSH=$HOME/.oh-my-zsh
 ZSH_THEME="robbyrussell"
 
 # ssh identities to use
-zstyle :omz:plugins:ssh-agent identities ab_rsa bb_rsa gh_rsa abgl_ed25519
+zstyle :omz:plugins:ssh-agent identities github
 
 # plugins to load
 plugins=(colored-man-pages common-aliases command-not-found docker docker-compose git git-extras github gitignore history ssh-agent sudo tmux z)
