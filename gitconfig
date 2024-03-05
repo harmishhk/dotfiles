@@ -27,7 +27,7 @@
     sslVerify = no
 [user]
     name = Harmish Khambhaita
-    email = hkhambhaita@anybotics.com
+    email = harmish@something
 [push]
     default = nothing
 [mergetool]
