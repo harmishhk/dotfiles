@@ -542,6 +542,23 @@ atd() {
 }
 
 
+rocker() {
+    # Allow local user access to the X11 server
+    xhost +SI:localuser:$(whoami)
+
+    # Run the Docker container with X11 forwarding and Docker socket access
+    docker run --rm -it \
+        -v /run/user/$(id -u)/docker.sock:/var/run/docker.sock \
+        -v /tmp/.X11-unix:/tmp/.X11-unix \
+        -e DISPLAY=$DISPLAY \
+        -v /dev/snd:/dev/snd \
+        -v /dev/dri:/dev/dri \
+        rocker -e __GLX_VENDOR_LIBRARY_NAME=nvidia -e __NV_PRIME_RENDER_OFFLOAD=1 -e __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0 "$@"
+
+    # Revoke local user access to the X11 server
+    xhost -SI:localuser:$(whoami)
+}
+
 ## setting USER_HOME, DOCKER_USERNS and DOCKER_HOME
 
 if hash docker 2>/dev/null; then
